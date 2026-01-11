@@ -58,16 +58,25 @@ If you want to keep your existing client separate:
 
 If you don't want to configure redirect URIs at all:
 
-### Option 1: Use gcloud CLI
+### Option 1: Use gcloud CLI (Recommended if already installed)
 
 ```bash
 # Install Google Cloud SDK if needed
-# Then authenticate
+# macOS: brew install google-cloud-sdk
+# Linux/Windows: https://cloud.google.com/sdk/docs/install
+
+# Authenticate with your Google account
 gcloud auth application-default login
 
-# Get access token
-gcloud auth print-access-token --scopes=https://www.googleapis.com/auth/drive.file
+# Get access token with Drive scope
+# IMPORTANT: Use full 'drive' scope (not 'drive.file' or 'drive.readonly')
+# Full 'drive' scope is required for listing children of shared folders
+gcloud auth print-access-token --scopes=https://www.googleapis.com/auth/drive
 ```
+
+**Copy the token** from the output and paste it in plugin Settings → Access Token field.
+
+**To refresh when expired:** Just run the `gcloud auth print-access-token` command again. It will automatically refresh if your credentials are still valid.
 
 ### Option 2: Use curl with service account
 

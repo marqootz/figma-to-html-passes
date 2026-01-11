@@ -15,33 +15,36 @@
             font-size: 12px;
             line-height: 1.4;
             color: #333;
-            background: #ffffff;
+            background: #ececec;
             overflow-y: auto;
             overflow-x: hidden;
             min-height: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
             display: flex;
             flex-direction: column;
-            min-height: 100%;
-            padding: 16px;
         }
 
         .header {
-            margin-bottom: 16px;
+            background: #000000;
+            padding: 16px;
+            margin-bottom: 0;
         }
 
         .title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #000;
+            font-size: 28px;
+            font-weight: 500;
+            color: #ffffff;
             margin-bottom: 4px;
         }
 
         .subtitle {
-            font-size: 11px;
-            color: #666;
+            font-size: 12px;
+            font-weight: 400;
+            color: #ffffff;
         }
 
         .section {
@@ -50,7 +53,7 @@
 
         .section-title {
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 400;
             color: #000;
             margin-bottom: 8px;
         }
@@ -61,10 +64,29 @@
         .input {
             width: 100%;
             padding: 8px;
-            border: 1px solid #e1e5e9;
+            border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 4px;
             font-size: 12px;
             background: #fff;
+            height: 32px;
+            box-sizing: border-box;
+        }
+
+        select.input {
+            padding: 8px 32px 8px 8px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='7' height='4' viewBox='0 0 7 4' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3.502 4C3.433 4 3.37 3.987 3.312 3.961C3.254 3.935 3.199 3.895 3.146 3.843L0.134 0.782C0.045 0.695 0 0.588 0 0.46C0 0.376 0.021 0.299 0.063 0.228C0.103 0.157 0.158 0.101 0.229 0.059C0.298 0.02 0.374 0 0.458 0C0.585 0 0.697 0.047 0.794 0.141L3.502 2.9L6.209 0.141C6.307 0.047 6.418 0 6.542 0C6.628 0 6.706 0.02 6.775 0.059C6.843 0.101 6.897 0.157 6.937 0.228C6.979 0.299 7 0.376 7 0.46C7 0.588 6.957 0.695 6.87 0.782L3.858 3.843C3.805 3.895 3.75 3.935 3.692 3.961C3.634 3.987 3.57 4 3.502 4Z' fill='rgba(0,0,0,1)'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            cursor: pointer;
+            height: 32px;
+            box-sizing: border-box;
+        }
+
+        textarea.input {
+            height: auto;
+            min-height: 100px;
+            resize: vertical;
         }
 
         .input:focus {
@@ -74,28 +96,41 @@
 
         .button {
             width: 100%;
-            padding: 8px 12px;
+            padding: 8px 24px;
             border: none;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 400;
             cursor: pointer;
             transition: background-color 0.2s;
+            height: 33px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .button-primary {
-            background: #0d99ff;
-            color: white;
+            background: #2d64dd;
+            color: #ffffff;
         }
 
         .button-primary:hover:not(:disabled) {
-            background: #0b8ce6;
+            background: #2559c4;
         }
 
         .button-primary:disabled {
             background: #e1e5e9;
             color: #8c8c8c;
             cursor: not-allowed;
+        }
+
+        .button-purple {
+            background: #c564de;
+            color: #ffffff;
+        }
+
+        .button-purple:hover:not(:disabled) {
+            background: #b554cd;
         }
 
         .button-secondary {
@@ -167,17 +202,127 @@
         }
 
         .section-header {
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 500;
             color: #000;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e1e5e9;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 12px;
+            font-weight: 400;
+            color: #000;
+            margin-bottom: 16px;
+        }
+
+        .sections-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 16px;
         }
 
         .section-container {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.16);
+        }
+
+        .step-container {
+            display: flex;
+            gap: 10px;
             margin-bottom: 24px;
-            padding-bottom: 16px;
+        }
+
+        .step-number {
+            font-size: 20px;
+            font-weight: 500;
+            color: #000;
+            flex-shrink: 0;
+            width: 12px;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.16);
+            max-width: 90%;
+            max-height: 85vh;
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            outline: none;
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e1e5e9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f1f3f4;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 12px 20px;
+            border-top: 1px solid #e1e5e9;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
         }
     </style>
 </head>
@@ -186,133 +331,184 @@
         <!-- Header -->
         <div class="header">
             <div class="title">Figma to HTML</div>
-            <div class="subtitle">Passes Methodology - Structure Recreation</div>
+            <div class="subtitle">Convert Figma prototypes to be used in UXync and Showroom</div>
         </div>
 
-        <!-- Showroom Section -->
-        <div class="section-container">
-            <div class="section-header">Showroom</div>
+        <!-- Sections Wrapper -->
+        <div class="sections-wrapper">
+            <!-- Showroom Section -->
+            <div class="section-container">
+                <div class="section-header">Showroom</div>
+                <div class="section-subtitle">Presentation content for GDF Showroom</div>
 
-            <!-- Google Drive Status -->
-        <div class="section">
-            <div class="input-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <span style="font-size: 11px; color: #666;">Google Drive:</span>
-                <span id="drive-status" style="font-size: 11px; color: #666;">Checking...</span>
-            </div>
-            <button id="connect-drive" class="button button-secondary" style="display: none; font-size: 11px; padding: 6px;">Connect to Google Drive</button>
-            <button id="settings-drive" class="button button-secondary" style="display: none; font-size: 11px; padding: 6px; margin-top: 4px;">Settings</button>
-            
-            <!-- Settings Panel (hidden by default) -->
-            <div id="oauth-settings" style="display: none; margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 11px; max-height: 400px; overflow-y: auto;">
-                <!-- Google Drive Folder ID - Always visible, users may need to change it -->
-                <div style="margin-bottom: 12px;">
-                    <div style="font-weight: 600; margin-bottom: 8px;">Google Drive Folder ID</div>
-                    <div style="margin-bottom: 8px;">
-                        <input type="text" id="drive-folder-id" class="input" placeholder="Enter folder ID from URL" style="font-size: 11px; padding: 6px; width: 100%;">
-                        <div style="font-size: 10px; color: #666; margin-top: 2px;">From: drive.google.com/drive/folders/FOLDER_ID</div>
-                        <div id="folder-id-build-time-notice" style="font-size: 10px; color: #0066cc; margin-top: 2px; display: none;">Currently using build-time value. Enter a new ID here to override.</div>
+                <!-- Google Drive Status (hidden in main UI, shown in settings) -->
+                <div class="section" style="display: none;">
+                    <div class="input-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-size: 11px; color: #666;">Google Drive:</span>
+                        <span id="drive-status" style="font-size: 11px; color: #666;">Checking...</span>
                     </div>
+                    <button id="connect-drive" class="button button-secondary" style="display: none; font-size: 11px; padding: 6px;">Connect to Google Drive</button>
+                    <button id="settings-drive" class="button button-secondary" style="display: none; font-size: 11px; padding: 6px; margin-top: 4px;">Settings</button>
                 </div>
 
-                <!-- Access Token (Manual Entry - Fallback Only) - Only show if backend/service account not configured -->
-                <div id="access-token-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9; display: none;">
-                    <div style="font-weight: 600; margin-bottom: 8px;">Access Token (Manual Entry - Fallback)</div>
-                    <div style="margin-bottom: 8px;">
-                        <input type="text" id="oauth-access-token" class="input" placeholder="Paste access token here (usually obtained via Connect button)" style="font-size: 11px; padding: 6px; width: 100%;">
-                        <div style="font-size: 10px; color: #666; margin-top: 2px;">Only needed if "Connect" button doesn't work. Use Connect button for automatic token acquisition.</div>
-                    </div>
-                </div>
 
-                <!-- OAuth Client ID - Only shown if NOT configured at build time (removed dynamically) -->
-                <div id="client-id-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9; display: none;">
-                    <div style="font-weight: 600; margin-bottom: 8px; color: #1a73e8;">OAuth Client ID</div>
-                    <div style="margin-bottom: 8px;">
-                        <label style="display: block; margin-bottom: 4px; font-weight: 500;">OAuth Client ID:</label>
-                        <input type="text" id="oauth-client-id" class="input" placeholder="Enter Google OAuth Client ID" style="font-size: 11px; padding: 6px; width: 100%;">
-                        <div style="font-size: 10px; color: #666; margin-top: 2px;">Get from Google Cloud Console → Credentials → OAuth 2.0 Client ID</div>
-                    </div>
-                </div>
 
-                <!-- Backend URL - Only shown if NOT configured at build time (removed dynamically) -->
-                <div id="backend-url-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9; display: none;">
-                    <div style="font-weight: 600; margin-bottom: 8px;">Backend URL</div>
-                    <div style="margin-bottom: 8px;">
-                        <label style="display: block; margin-bottom: 4px; font-weight: 500;">Backend URL (For OAuth/Service Account):</label>
-                        <input type="text" id="auth-backend-url" class="input" placeholder="https://your-backend.com/api" style="font-size: 11px; padding: 6px; width: 100%;">
-                        <div style="font-size: 10px; color: #666; margin-top: 2px;">Required for backend OAuth flow or service account JWT signing</div>
-                    </div>
-                </div>
+                <!-- Step 1: Configuration -->
+                <div class="step-container">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div style="display: flex; gap: 16px;">
+                            <!-- Presentation Selection -->
+                            <div style="flex: 1;">
+                                <div class="section-title" style="margin-bottom: 8px; font-size: 12px; font-weight: 400;">Presentation:</div>
+                                <div style="font-size: 10px; color: #000; opacity: 0.5; margin-bottom: 8px;">Choose an existing or new presentation for export.</div>
+                                <div class="input-group" style="position: relative;">
+                                    <select id="presentation-select" class="input" style="margin-bottom: 8px;">
+                                        <option value="">Select</option>
+                                    </select>
+                                </div>
+                                <div class="input-group" id="new-presentation-group" style="display: none;">
+                                    <input type="text" id="new-presentation-name" class="input" placeholder="Enter presentation name" style="margin-bottom: 4px;">
+                                    <div id="presentation-name-error" style="font-size: 10px; color: #cc0000; display: none;"></div>
+                                </div>
+                            </div>
 
-                <!-- Service Account - Only shown if NOT configured at build time (removed dynamically) -->
-                <details id="service-account-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9; display: none;">
-                    <summary style="font-weight: 600; cursor: pointer; margin-bottom: 8px; color: #666;">Service Account (Advanced - Optional)</summary>
-                    <div style="margin-top: 8px;">
-                        <div style="margin-bottom: 8px;">
-                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Service Account JSON:</label>
-                            <textarea id="service-account-json" class="input" placeholder='Paste service account JSON here: {"type":"service_account",...}' style="font-size: 10px; padding: 6px; height: 80px; font-family: monospace; resize: vertical; width: 100%;"></textarea>
-                            <div style="font-size: 10px; color: #666; margin-top: 2px;">For managed deployments. Or configure via GOOGLE_SERVICE_ACCOUNT_JSON env var at build time</div>
+                            <!-- Wall Selection -->
+                            <div style="flex: 1;">
+                                <div class="section-title" style="margin-bottom: 8px; font-size: 12px; font-weight: 400;">Wall:</div>
+                                <div style="font-size: 10px; color: #000; opacity: 0.5; margin-bottom: 8px;">Choose which wall this export is for.</div>
+                                <div class="input-group" style="position: relative;">
+                                    <select id="wall-select" class="input">
+                                        <option value="">Select</option>
+                                        <option value="wall1">wall1</option>
+                                        <option value="wall2">wall2</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </details>
+                </div>
 
-                <button id="save-oauth-settings" class="button button-primary" style="font-size: 11px; padding: 6px; width: 100%; margin-top: 8px;">Save Settings</button>
-            </div>
-        </div>
-
-        <!-- Presentation and Wall Selection (Horizontal) -->
-        <div class="section">
-            <div style="display: flex; gap: 12px; align-items: flex-start;">
-                <!-- Presentation Selection -->
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                        <div class="section-title" style="margin: 0; font-size: 12px;">Presentation:</div>
-                        <button id="refresh-presentations" class="button button-secondary" style="font-size: 10px; padding: 4px 8px; min-width: auto;" title="Refresh presentations list">↻ Refresh</button>
-                    </div>
-                    <div class="input-group">
-                        <select id="presentation-select" class="input" style="margin-bottom: 8px;">
-                            <option value="">Loading presentations...</option>
-                        </select>
-                    </div>
-                    <div class="input-group" id="new-presentation-group" style="display: none;">
-                        <input type="text" id="new-presentation-name" class="input" placeholder="Enter presentation name (e.g., Product Launch 2024)" style="margin-bottom: 4px;">
-                        <div id="presentation-name-error" style="font-size: 10px; color: #cc0000; display: none;"></div>
+                <!-- Step 2: Export Actions -->
+                <div class="step-container">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="section-title" style="margin-bottom: 8px; font-size: 12px; font-weight: 400;">Export:</div>
+                        <div style="font-size: 10px; color: #000; opacity: 0.5; margin-bottom: 12px;">Export both the content and navigation for your presentation.</div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="input-group">
+                                <button id="export-to-showroom" class="button button-primary" disabled>Export content</button>
+                            </div>
+                            <div class="input-group">
+                                <button id="export-rules" class="button button-primary" disabled>Export navigation</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Wall Selection -->
-                <div style="flex: 0 0 120px;">
-                    <div class="section-title" style="margin-bottom: 8px; font-size: 12px;">Wall:</div>
+            </div>
+
+            <!-- UXync Section -->
+            <div class="section-container">
+                <div class="section-header">UXync</div>
+                <div class="section-subtitle">Interactive experiences for UXync UXR system.</div>
+
+                <!-- Local Export Section -->
+                <div class="section">
                     <div class="input-group">
-                        <select id="wall-select" class="input">
-                            <option value="wall1">wall1</option>
-                            <option value="wall2">wall2</option>
-                        </select>
+                        <button id="export-locally" class="button button-purple">Export</button>
                     </div>
                 </div>
             </div>
         </div>
 
-            <!-- Export Section -->
-            <div class="section">
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div class="input-group">
-                        <button id="export-to-showroom" class="button button-primary" disabled>Export to Showroom</button>
-                    </div>
-                    <div class="input-group">
-                        <button id="export-rules" class="button button-secondary" disabled style="background: #9333ea; color: white;">Export Media Control</button>
-                    </div>
-                </div>
+        <!-- Footer -->
+        <div style="background: #ececec; padding: 0px 16px 16px 16px; display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12px; color: #000; font-weight: 400;">Google Drive</span>
+                <span id="drive-status-footer" style="font-size: 12px; color: #000; font-weight: 500;">Checking...</span>
             </div>
+            <button id="settings-drive-footer" style="background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; width: 14px; height: 14px;" title="Settings">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.54755 14 L5.32565 11.9972 C4.95581 11.8806 4.60279 11.7315 4.26657 11.55 C3.93708 11.3685 3.6244 11.1481 3.32853 10.8889 L1.45245 11.6861 L0 9.31389 L1.67435 8.10833 C1.51297 7.36944 1.51297 6.63056 1.67435 5.89167 L0 4.68611 L1.45245 2.31389 L3.32853 3.11111 C3.6244 2.84537 3.93708 2.625 4.26657 2.45 C4.60279 2.26852 4.95581 2.11944 5.32565 2.00278 L5.54755 0 L8.45245 0 L8.67435 2.00278 C9.05091 2.11944 9.4073 2.26852 9.74352 2.45 C10.0797 2.625 10.389 2.84537 10.6715 3.11111 L12.5476 2.31389 L14 4.68611 L12.3256 5.89167 C12.487 6.63056 12.487 7.36944 12.3256 8.10833 L14 9.31389 L12.5476 11.6861 L10.6715 10.8889 C10.389 11.1481 10.0797 11.3685 9.74352 11.55 C9.4073 11.7315 9.05091 11.8806 8.67435 11.9972 L8.45245 14 L5.54755 14 Z M7 9.72222 C7.5245 9.72222 7.99856 9.60231 8.42219 9.3625 C8.85255 9.1162 9.19212 8.78889 9.44092 8.38056 C9.69645 7.96574 9.82421 7.50555 9.82421 7 C9.82421 6.49444 9.69645 6.0375 9.44092 5.62917 C9.19212 5.21435 8.85255 4.88704 8.42219 4.64722 C7.99856 4.40093 7.5245 4.27778 7 4.27778 C6.4755 4.27778 5.99808 4.40093 5.56772 4.64722 C5.14409 4.88704 4.80452 5.21435 4.54899 5.62917 C4.30019 6.0375 4.17579 6.49444 4.17579 7 C4.17579 7.50555 4.30019 7.96574 4.54899 8.38056 C4.80452 8.78889 5.14409 9.1162 5.56772 9.3625 C5.99808 9.60231 6.4755 9.72222 7 9.72222 Z" fill="rgba(0, 0, 0, 1)"/>
+                </svg>
+            </button>
         </div>
 
-        <!-- UXR Uxync Section -->
-        <div class="section-container">
-            <div class="section-header">UXR Uxync</div>
+        <!-- Settings Modal -->
+        <div id="modal-overlay" class="modal-overlay">
+            <div class="modal-container" id="modal-container">
+                <div class="modal-header">
+                    <div class="modal-title">Settings</div>
+                    <button id="modal-close" class="modal-close" title="Close">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4L4 12M4 4L12 12" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body" id="oauth-settings" style="font-size: 12px;">
+                    <!-- Google Drive Connection Status -->
+                    <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #e1e5e9;">
+                        <div style="font-weight: 600; margin-bottom: 12px;">Google Drive Connection</div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="font-size: 12px; color: #666;">Status:</span>
+                            <span id="drive-status-modal" style="font-size: 12px; color: #666; font-weight: 500;">Checking...</span>
+                        </div>
+                        <button id="connect-drive" class="button button-primary" style="width: 100%; display: none;">Connect to Google Drive</button>
+                    </div>
 
-            <!-- Local Export Section -->
-            <div class="section">
-                <div class="input-group">
-                    <button id="export-locally" class="button button-secondary" disabled>Export Locally</button>
+                    <!-- Google Drive Folder ID - Always visible, users may need to change it -->
+                    <div style="margin-bottom: 12px;">
+                        <div style="font-weight: 600; margin-bottom: 8px;">Google Drive Folder ID</div>
+                        <div style="margin-bottom: 8px;">
+                            <input type="text" id="drive-folder-id" class="input" placeholder="Enter folder ID from URL" style="font-size: 12px; padding: 8px;">
+                            <div style="font-size: 11px; color: #666; margin-top: 4px;">From: drive.google.com/drive/folders/FOLDER_ID</div>
+                            <div id="folder-id-build-time-notice" style="font-size: 11px; color: #0066cc; margin-top: 4px; display: none;">Currently using build-time value. Enter a new ID here to override.</div>
+                        </div>
+                    </div>
+
+                    <!-- Access Token (Manual Entry - Fallback) -->
+                    <div id="access-token-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9;">
+                        <div style="font-weight: 600; margin-bottom: 8px;">Access Token (Manual Entry - Fallback)</div>
+                        <div style="margin-bottom: 8px;">
+                            <input type="text" id="oauth-access-token" class="input" placeholder="Paste access token here (fallback if Connect button fails)" style="font-size: 12px; padding: 8px;">
+                            <div style="font-size: 11px; color: #666; margin-top: 4px;">Only needed if "Connect" button doesn't work. Use Connect button for automatic token acquisition.</div>
+                        </div>
+                    </div>
+
+                    <!-- OAuth Client ID -->
+                    <div id="client-id-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9;">
+                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a73e8;">OAuth Client ID</div>
+                        <div style="margin-bottom: 8px;">
+                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">OAuth Client ID:</label>
+                            <input type="text" id="oauth-client-id" class="input" placeholder="Enter Google OAuth Client ID" style="font-size: 12px; padding: 8px;">
+                            <div style="font-size: 11px; color: #666; margin-top: 4px;">Get from Google Cloud Console → Credentials → OAuth 2.0 Client ID</div>
+                        </div>
+                    </div>
+
+                    <!-- Backend URL -->
+                    <div id="backend-url-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9;">
+                        <div style="font-weight: 600; margin-bottom: 8px;">Backend URL</div>
+                        <div style="margin-bottom: 8px;">
+                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Backend URL (For OAuth/Service Account):</label>
+                            <input type="text" id="auth-backend-url" class="input" placeholder="https://your-backend.com/api" style="font-size: 12px; padding: 8px;">
+                            <div style="font-size: 11px; color: #666; margin-top: 4px;">Required for backend OAuth flow or service account JWT signing</div>
+                        </div>
+                    </div>
+
+                    <!-- Service Account (Advanced - Optional) -->
+                    <details id="service-account-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9;">
+                        <summary style="font-weight: 600; cursor: pointer; margin-bottom: 8px; color: #666;">Service Account (Advanced - Optional)</summary>
+                        <div style="margin-top: 8px;">
+                            <div style="margin-bottom: 8px;">
+                                <label style="display: block; margin-bottom: 4px; font-weight: 500;">Service Account JSON:</label>
+                                <textarea id="service-account-json" class="input" placeholder='Paste service account JSON here: {"type":"service_account",...}' style="font-size: 11px; padding: 8px; height: 100px; font-family: monospace; resize: vertical;"></textarea>
+                                <div style="font-size: 11px; color: #666; margin-top: 4px;">For managed deployments. Or configure via GOOGLE_SERVICE_ACCOUNT_JSON env var at build time</div>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-oauth-settings" class="button button-primary" style="width: auto; min-width: 100px;">Save Settings</button>
                 </div>
             </div>
         </div>
@@ -355,8 +551,38 @@
                     this.toggleOAuthSettings();
                 });
 
+                // Footer settings button
+                const settingsFooterBtn = document.getElementById('settings-drive-footer');
+                if (settingsFooterBtn) {
+                    settingsFooterBtn.addEventListener('click', () => {
+                        this.toggleOAuthSettings();
+                    });
+                }
+
                 document.getElementById('save-oauth-settings').addEventListener('click', () => {
                     this.saveOAuthSettings();
+                });
+
+                // Modal close handlers
+                document.getElementById('modal-close').addEventListener('click', () => {
+                    this.closeModal();
+                });
+
+                // Close modal when clicking outside
+                document.getElementById('modal-overlay').addEventListener('click', (e) => {
+                    if (e.target.id === 'modal-overlay') {
+                        this.closeModal();
+                    }
+                });
+
+                // Close modal on Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        const overlay = document.getElementById('modal-overlay');
+                        if (overlay && overlay.classList.contains('show')) {
+                            this.closeModal();
+                        }
+                    }
                 });
 
                 // Presentation dropdown
@@ -365,9 +591,6 @@
                 });
 
                 // Refresh presentations button
-                document.getElementById('refresh-presentations').addEventListener('click', () => {
-                    this.refreshPresentations();
-                });
 
                 // New presentation name input
                 document.getElementById('new-presentation-name').addEventListener('input', (e) => {
@@ -405,19 +628,37 @@
             }
 
             async toggleOAuthSettings() {
-                const settingsDiv = document.getElementById('oauth-settings');
-                const isVisible = settingsDiv.style.display !== 'none';
+                const overlay = document.getElementById('modal-overlay');
+                const isVisible = overlay && overlay.classList.contains('show');
                 
                 if (!isVisible) {
-                    // Request settings and wait for response before showing panel
+                    // Request settings and wait for response before showing modal
                     // This ensures build-time config is checked and sections removed first
                     this.sendMessage({ type: 'get-settings' });
-                    // Panel will be shown after settings-loaded message is processed
+                    // Modal will be shown after settings-loaded message is processed
                     this.pendingSettingsOpen = true;
                 } else {
-                    settingsDiv.style.display = 'none';
+                    this.closeModal();
+                }
+            }
+
+            openModal() {
+                const overlay = document.getElementById('modal-overlay');
+                if (overlay) {
+                    overlay.classList.add('show');
+                    // Focus the modal container for accessibility
+                    const container = document.getElementById('modal-container');
+                    if (container) {
+                        container.focus();
+                    }
+                }
+            }
+
+            closeModal() {
+                const overlay = document.getElementById('modal-overlay');
+                if (overlay) {
+                    overlay.classList.remove('show');
                     this.pendingSettingsOpen = false;
-                    this.resizeUI();
                 }
             }
 
@@ -500,6 +741,8 @@
                 setTimeout(() => {
                     this.sendMessage({ type: 'get-settings' });
                     this.checkGoogleDriveConnection();
+                    // Close modal after saving
+                    this.closeModal();
                 }, 500);
             }
 
@@ -507,25 +750,6 @@
                 this.sendMessage({ type: 'fetch-presentations' });
             }
 
-            async refreshPresentations() {
-                const refreshButton = document.getElementById('refresh-presentations');
-                const select = document.getElementById('presentation-select');
-                
-                // Show loading state
-                refreshButton.disabled = true;
-                refreshButton.textContent = '↻ Refreshing...';
-                select.innerHTML = '<option value="">Refreshing...</option>';
-                
-                // Reload presentations
-                this.showStatus('Refreshing presentations list...', 'info');
-                await this.loadPresentations();
-                
-                // Reset button after a short delay
-                setTimeout(() => {
-                    refreshButton.disabled = false;
-                    refreshButton.textContent = '↻ Refresh';
-                }, 1000);
-            }
 
             handlePresentationChange(value) {
                 const newPresentationGroup = document.getElementById('new-presentation-group');
@@ -683,7 +907,7 @@
             handleMessage(message) {
                 switch (message.type) {
                     case 'plugin-ready':
-                        this.showStatus('Plugin ready!', 'success');
+                        // Plugin is ready, no status message needed
                         break;
                     case 'drive-connection-status':
                         this.handleDriveConnectionStatus(message);
@@ -711,23 +935,18 @@
                     case 'prompt-client-id':
                     case 'prompt-access-token':
                         this.showStatus(message.message || 'Please configure OAuth settings', 'info');
-                        // Show settings panel
-                        document.getElementById('oauth-settings').style.display = 'block';
+                        // Show settings modal
+                        this.openModal();
                         break;
                     case 'success':
                         this.showStatus(message.message, 'success');
                         break;
                     case 'settings-loaded':
                         this.handleSettingsLoaded(message);
-                        // If Settings panel was requested to be opened, show it now after processing
+                        // If Settings modal was requested to be opened, show it now after processing
                         if (this.pendingSettingsOpen) {
-                            const settingsDiv = document.getElementById('oauth-settings');
-                            if (settingsDiv) {
-                                settingsDiv.style.display = 'block';
-                            }
+                            this.openModal();
                             this.pendingSettingsOpen = false;
-                            // Resize UI after showing settings
-                            setTimeout(() => this.resizeUI(), 100);
                         }
                         break;
                     case 'selection-data':
@@ -812,64 +1031,33 @@
                 const accessTokenSection = document.getElementById('access-token-section');
                 const folderIdNotice = document.getElementById('folder-id-build-time-notice');
                 
-                // Remove Client ID section if configured at build time
-                if (buildTimeConfig.hasClientId) {
-                    if (clientIdSection && clientIdSection.parentNode) {
-                        console.log('🗑️  Removing Client ID section (configured at build time)');
-                        clientIdSection.remove();
-                    }
-                } else {
-                    // Show and populate Client ID if not at build time
-                    if (clientIdSection) {
-                        clientIdSection.style.display = 'block';
-                        const clientIdInput = document.getElementById('oauth-client-id');
-                        if (clientIdInput) {
-                            if (message.clientId) {
-                                clientIdInput.value = message.clientId;
-                            }
+                // All sections are now always visible in the modal
+                // Populate values if they exist
+                if (clientIdSection) {
+                    const clientIdInput = document.getElementById('oauth-client-id');
+                    if (clientIdInput) {
+                        if (message.clientId) {
+                            clientIdInput.value = message.clientId;
                         }
                     }
                 }
                 
-                // Remove Backend URL section if configured at build time
-                if (buildTimeConfig.hasBackendUrl) {
-                    if (backendUrlSection && backendUrlSection.parentNode) {
-                        console.log('🗑️  Removing Backend URL section (configured at build time)');
-                        backendUrlSection.remove();
-                    }
-                } else {
-                    // Show Backend URL if not at build time
-                    if (backendUrlSection) {
-                        backendUrlSection.style.display = 'block';
-                        const backendUrlInput = document.getElementById('auth-backend-url');
-                        if (backendUrlInput && message.backendUrl) {
-                            backendUrlInput.value = message.backendUrl;
-                        }
+                if (backendUrlSection) {
+                    const backendUrlInput = document.getElementById('auth-backend-url');
+                    if (backendUrlInput && message.backendUrl) {
+                        backendUrlInput.value = message.backendUrl;
                     }
                 }
                 
-                // Remove Service Account section if configured at build time
-                if (buildTimeConfig.hasServiceAccount) {
-                    if (serviceAccountSection && serviceAccountSection.parentNode) {
-                        console.log('🗑️  Removing Service Account section (configured at build time)');
-                        serviceAccountSection.remove();
-                    }
-                } else {
-                    // Show Service Account if not at build time
-                    if (serviceAccountSection) {
-                        serviceAccountSection.style.display = 'block';
-                        const saInput = document.getElementById('service-account-json');
-                        if (saInput && message.hasServiceAccountKey && !saInput.value) {
-                            saInput.placeholder = 'Service account key is set (hidden for security)';
-                        }
+                if (serviceAccountSection) {
+                    const saInput = document.getElementById('service-account-json');
+                    if (saInput && message.hasServiceAccountKey && !saInput.value) {
+                        saInput.placeholder = 'Service account key is set (hidden for security)';
                     }
                 }
                 
-                // Access Token section - always show as fallback option
-                // Even if backend/service account is configured, users may need manual entry if backend fails
+                // Access Token section - always visible
                 if (accessTokenSection) {
-                    // Always show access token field (users may need it if backend fails)
-                    accessTokenSection.style.display = 'block';
                     const tokenInput = document.getElementById('oauth-access-token');
                     if (tokenInput) {
                         if (message.hasAccessToken && !tokenInput.value) {
@@ -905,24 +1093,48 @@
             handleDriveConnectionStatus(message) {
                 this.isConnected = message.connected || false;
                 const statusElement = document.getElementById('drive-status');
+                const statusModal = document.getElementById('drive-status-modal');
+                const statusFooter = document.getElementById('drive-status-footer');
                 const connectButton = document.getElementById('connect-drive');
                 const settingsButton = document.getElementById('settings-drive');
                 
                 if (this.isConnected) {
-                    if (message.folderId) {
-                        statusElement.textContent = `✓ Connected (${message.folderId.substring(0, 12)}...)`;
-                        statusElement.title = `Folder ID: ${message.folderId}`;
-                    } else {
-                        statusElement.textContent = '✓ Connected';
+                    const statusText = 'Connected';
+                    if (statusElement) {
+                        if (message.folderId) {
+                            statusElement.textContent = `✓ ${statusText} (${message.folderId.substring(0, 12)}...)`;
+                            statusElement.title = `Folder ID: ${message.folderId}`;
+                        } else {
+                            statusElement.textContent = `✓ ${statusText}`;
+                        }
+                        statusElement.style.color = '#006600';
                     }
-                    statusElement.style.color = '#006600';
-                    connectButton.style.display = 'none';
-                    settingsButton.style.display = 'block';
+                    if (statusModal) {
+                        statusModal.textContent = statusText;
+                        statusModal.style.color = '#33a68f';
+                    }
+                    if (statusFooter) {
+                        statusFooter.textContent = statusText;
+                        statusFooter.style.color = '#33a68f';
+                    }
+                    if (connectButton) connectButton.style.display = 'none';
+                    if (settingsButton) settingsButton.style.display = 'block';
                 } else {
-                    statusElement.textContent = message.message || 'Not connected';
-                    statusElement.style.color = '#cc0000';
-                    connectButton.style.display = 'block';
-                    settingsButton.style.display = 'block';
+                    const statusText = message.message || 'Not connected';
+                    if (statusElement) {
+                        statusElement.textContent = statusText;
+                        statusElement.style.color = '#cc0000';
+                    }
+                    if (statusModal) {
+                        statusModal.textContent = 'Not connected';
+                        statusModal.style.color = '#000';
+                    }
+                    if (statusFooter) {
+                        statusFooter.textContent = 'Not connected';
+                        statusFooter.style.color = '#000';
+                    }
+                    if (connectButton) connectButton.style.display = 'block';
+                    if (settingsButton) settingsButton.style.display = 'block';
                 }
                 this.updateExportButton();
                 
@@ -935,15 +1147,11 @@
             handlePresentationsLoaded(message) {
                 this.presentations = message.presentations || [];
                 const select = document.getElementById('presentation-select');
-                const refreshButton = document.getElementById('refresh-presentations');
                 
                 select.innerHTML = '';
                 
                 if (this.presentations.length === 0) {
                     select.innerHTML = '<option value="">No presentations found</option>';
-                    if (message.message) {
-                        this.showStatus(message.message, 'info');
-                    }
                 } else {
                     this.presentations.forEach(presentation => {
                         const option = document.createElement('option');
@@ -951,10 +1159,6 @@
                         option.textContent = presentation;
                         select.appendChild(option);
                     });
-                    
-                    if (message.message && this.presentations.length > 0) {
-                        this.showStatus(message.message, 'success');
-                    }
                 }
                 
                 // Add separator and "New Presentation" option
@@ -967,12 +1171,6 @@
                 newOption.value = 'new';
                 newOption.textContent = '[+ New Presentation]';
                 select.appendChild(newOption);
-                
-                // Reset refresh button state
-                if (refreshButton) {
-                    refreshButton.disabled = false;
-                    refreshButton.textContent = '↻ Refresh';
-                }
                 
                 this.updateExportButton();
             }
@@ -1399,8 +1597,8 @@ This is a placeholder file for the video: ${videoFile.filename}
                     (presentationSelect.value !== 'new' || newPresentationName.value.trim().length > 0);
                 
                 exportToShowroomButton.disabled = !this.isConnected || !hasPresentation;
-                exportLocallyButton.disabled = false;
-                exportRulesButton.disabled = false;
+                exportLocallyButton.disabled = false; // UXync export is always enabled
+                exportRulesButton.disabled = !this.isConnected || !hasPresentation; // Export navigation requires connection and presentation
             }
 
             setExportButtonEnabled(enabled, includeLocal = false) {
@@ -1468,4 +1666,5 @@ This is a placeholder file for the video: ${videoFile.filename}
         new FigmaToHTMLUI();
     </script>
 </body>
+</html>
 </html>

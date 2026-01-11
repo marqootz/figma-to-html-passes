@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: figma-plugin-oauth-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      # Add these in Render dashboard:
+      # - key: GOOGLE_CLIENT_ID
+      #   value: your-client-id
+      # - key: GOOGLE_CLIENT_SECRET
+      #   value: your-client-secret

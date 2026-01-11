@@ -17,6 +17,7 @@ brew install oauth2l
 
 **Linux/Windows:**
 ```bash
+# Requires Python 3.10+ (Python 3.9 deprecated January 2026)
 pip install oauth2l
 ```
 
@@ -192,7 +193,7 @@ http://localhost:8080/#access_token=ya29.a0AfH6...&token_type=Bearer&expires_in=
 You can run a simple local server to catch the redirect:
 
 ```bash
-# Python 3
+# Python 3.10+ (Python 3.9 deprecated January 2026)
 python3 -m http.server 8080
 
 # Or Node.js
