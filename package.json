@@ -1,0 +1,25 @@
+{
+  "name": "figma-to-html-passes",
+  "version": "1.0.0",
+  "description": "Multi-pass HTML generation system for Figma prototypes",
+  "main": "src/main.js",
+  "scripts": {
+    "build": "node build.js",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean"
+  },
+  "keywords": [
+    "figma",
+    "html",
+    "prototype",
+    "conversion",
+    "multi-pass"
+  ],
+  "author": "Mark Manfrey",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

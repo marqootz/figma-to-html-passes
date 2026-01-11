@@ -1,0 +1,22 @@
+{
+  "name": "Figma to HTML",
+  "id": "figma-to-html-passes",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": [
+    "figma"
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "https://www.googleapis.com",
+      "https://accounts.google.com",
+      "https://oauth2.googleapis.com"
+    ]
+  },
+  "permissions": [
+    "currentuser"
+  ]
+}

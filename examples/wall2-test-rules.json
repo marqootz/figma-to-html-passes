@@ -1,0 +1,35 @@
+{
+  "categories": {
+    "interaction": {
+      "name": "Interaction Rules",
+      "description": "Rules for user interactions between clients",
+      "color": "#667eea"
+    },
+    "feedback": {
+      "name": "Feedback Rules",
+      "description": "Rules for providing feedback between clients",
+      "color": "#764ba2"
+    },
+    "audio": {
+      "name": "Audio Rules",
+      "description": "Rules for triggering audio playback",
+      "color": "#ff6b6b"
+    }
+  },
+  "ruleSets": {
+    "custom-1760195645866": {
+      "name": "wall2-test",
+      "description": "Auto-generated rules for wall2-test.html",
+      "category": "interaction",
+      "project": "Unassigned",
+      "tags": [
+        "auto-generated",
+        "figma-export"
+      ],
+      "rules": [],
+      "variables": {},
+      "isTemplate": false,
+      "active": true
+    }
+  }
+}

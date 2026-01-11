@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lottie Setup Example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        .code {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .step {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .warning {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #721c24;
+        }
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 30px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Lottie Animation Setup Guide</h1>
+        
+        <div class="highlight">
+            <strong>📋 Quick Start:</strong> Create frames in Figma named <code>[LOTTIE] filename.json</code> and place your Lottie JSON files in the <code>examples/lottie/</code> directory.
+        </div>
+
+        <h2>🎯 Step 1: Prepare Your Lottie Files</h2>
+        
+        <div class="step">
+            <h3>1.1 Get Lottie Animation Files</h3>
+            <ul>
+                <li><strong>Create your own:</strong> Use After Effects + Bodymovin plugin</li>
+                <li><strong>Download free:</strong> Visit <a href="https://lottiefiles.com" target="_blank">lottiefiles.com</a></li>
+                <li><strong>Format:</strong> Must be JSON files (not GIF or MP4)</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>1.2 Place Files in Directory</h3>
+            <p>Create the <code>examples/lottie/</code> directory and add your JSON files:</p>
+            <div class="code">examples/
+├── lottie/
+│   ├── loading-spinner.json
+│   ├── success-checkmark.json
+│   ├── error-x.json
+│   └── custom-animation.json
+└── figma-structure.html</div>
+        </div>
+
+        <h2>🎨 Step 2: Create Figma Frames</h2>
+        
+        <div class="step">
+            <h3>2.1 Frame Naming Convention</h3>
+            <p>Name your Figma frames exactly like this:</p>
+            <div class="code">[LOTTIE] filename.json</div>
+            <p><strong>Examples:</strong></p>
+            <ul>
+                <li><code>[LOTTIE] loading-spinner.json</code></li>
+                <li><code>[LOTTIE] success-checkmark.json</code></li>
+                <li><code>[LOTTIE] error-x.json</code></li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>2.2 Frame Setup</h3>
+            <ul>
+                <li>Create a <strong>FRAME</strong> in Figma</li>
+                <li>Set the frame size to match your animation dimensions</li>
+                <li>Name it with the <code>[LOTTIE]</code> prefix</li>
+                <li>Position it where you want the animation to appear</li>
+            </ul>
+        </div>
+
+        <h2>⚙️ Step 3: Generate HTML</h2>
+        
+        <div class="step">
+            <h3>3.1 Export from Figma Plugin</h3>
+            <ol>
+                <li>Select your Lottie frames in Figma</li>
+                <li>Run the Figma-to-HTML plugin</li>
+                <li>The plugin will automatically detect <code>[LOTTIE]</code> frames</li>
+                <li>Generate HTML with Lottie animations included</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>3.2 Serve with Web Server</h3>
+            <p>Never open HTML files directly in the browser. Use a web server:</p>
+            <div class="code"># Option 1: Use the streaming server (recommended)
+node examples/video-streaming-server.js
+
+# Option 2: Python server
+python -m http.server 8000
+
+# Option 3: Node.js serve
+npx serve .</div>
+        </div>
+
+        <h2>🎬 Generated HTML Example</h2>
+        
+        <p>Your Lottie frames will generate HTML like this:</p>
+        <div class="code">&lt;div data-figma-name="[LOTTIE] loading-spinner.json" data-lottie-frame="true" data-lottie-filename="loading-spinner.json"&gt;
+  &lt;div class="lottie-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"&gt;
+    &lt;div id="lottie-123-456" 
+         style="width: 100%; height: 100%;"
+         data-lottie-src="lottie/loading-spinner.json"&gt;
+      &lt;div style="padding: 20px; text-align: center; color: #666;"&gt;
+        Loading Lottie animation...
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+
+        <h2>🎮 JavaScript API</h2>
+        
+        <p>Control your animations programmatically:</p>
+        <div class="code">// Access the Lottie manager
+const lottieManager = window.lottieManager;
+
+// Play a specific animation
+lottieManager.playAnimation('lottie-123-456');
+
+// Pause a specific animation
+lottieManager.pauseAnimation('lottie-123-456');
+
+// Stop a specific animation
+lottieManager.stopAnimation('lottie-123-456');</div>
+
+        <h2>✨ Features</h2>
+        
+        <ul>
+            <li><strong>🎯 Auto-detection:</strong> Automatically finds <code>[LOTTIE]</code> frames</li>
+            <li><strong>🔄 Auto-play:</strong> Animations start automatically</li>
+            <li><strong>🔁 Looping:</strong> Animations loop continuously</li>
+            <li><strong>🎨 SVG Rendering:</strong> High-quality vector animations</li>
+            <li><strong>📁 Multiple Paths:</strong> Tries different file locations automatically</li>
+            <li><strong>⚠️ Error Handling:</strong> Shows helpful messages if files fail to load</li>
+            <li><strong>⏳ Loading States:</strong> Shows loading indicator while fetching</li>
+        </ul>
+
+        <h2>🚨 Troubleshooting</h2>
+        
+        <div class="warning">
+            <h3>Animation Not Loading?</h3>
+            <ul>
+                <li>Check that the JSON file is valid Lottie format</li>
+                <li>Verify the filename in the frame name matches the actual file</li>
+                <li>Ensure you're using a web server (not opening file directly)</li>
+                <li>Check browser console for error messages</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <h3>File Path Issues?</h3>
+            <p>The system automatically tries these paths:</p>
+            <ul>
+                <li><code>lottie/filename.json</code></li>
+                <li><code>./lottie/filename.json</code></li>
+                <li><code>../lottie/filename.json</code></li>
+                <li><code>/examples/lottie/filename.json</code></li>
+                <li><code>examples/lottie/filename.json</code></li>
+            </ul>
+        </div>
+
+        <h2>📚 Resources</h2>
+        
+        <ul>
+            <li><strong>LottieFiles:</strong> <a href="https://lottiefiles.com" target="_blank">lottiefiles.com</a> - Free animations</li>
+            <li><strong>After Effects:</strong> Create custom animations with Bodymovin plugin</li>
+            <li><strong>Lottie Web:</strong> <a href="https://github.com/airbnb/lottie-web" target="_blank">GitHub repository</a></li>
+            <li><strong>Documentation:</strong> <a href="https://lottiefiles.com/docs" target="_blank">Lottie documentation</a></li>
+        </ul>
+
+        <div class="highlight">
+            <strong>🎉 That's it!</strong> Your Lottie animations will now be automatically included in your Figma-to-HTML exports. The system handles loading, error states, and provides a JavaScript API for control.
+        </div>
+    </div>
+</body>
+</html>

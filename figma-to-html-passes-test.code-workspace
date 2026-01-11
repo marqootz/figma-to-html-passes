@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"name": "Figma to HTML Passes",
+			"path": "/Users/markmanfrey/LOCAL_DEV/figma-to-html-passes"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"**/node_modules": true,
+			"**/dist": true
+		},
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/node_modules/**": true,
+			"**/dist/**": true
+		}
+	},
+	"extensions": {
+		"recommendations": []
+	}
+}

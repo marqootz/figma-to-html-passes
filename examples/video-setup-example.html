@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Setup Example - Figma to HTML</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .step-number {
+            background: #007bff;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+            margin: 15px 0;
+        }
+        .warning {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #dc3545;
+            margin: 15px 0;
+        }
+        .file-structure {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-line;
+        }
+        .video-example {
+            border: 2px dashed #007bff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 Video File Copying Feature</h1>
+        
+        <div class="success">
+            <strong>✅ New Feature:</strong> The Figma to HTML exporter now automatically detects video files and provides setup instructions!
+        </div>
+
+        <h2>How It Works</h2>
+        
+        <div class="step">
+            <div class="step-number">1</div>
+            <strong>Create Video Frames in Figma</strong>
+            <p>Name your frames with the <code>[VIDEO]</code> prefix followed by the video filename:</p>
+            <div class="code">[VIDEO] demo-video.mp4
+[VIDEO] presentation.webm
+[VIDEO] tutorial.mov</div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <strong>Export Your Design</strong>
+            <p>When you export your design, the plugin will:</p>
+            <ul>
+                <li>Detect all frames with <code>[VIDEO]</code> prefix</li>
+                <li>Extract the video filenames</li>
+                <li>Generate HTML with video elements</li>
+                <li>Download a setup guide with video file information</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <strong>Setup Video Files</strong>
+            <p>The plugin downloads two files:</p>
+            <ul>
+                <li><strong>Your HTML file</strong> - Contains the generated design</li>
+                <li><strong>video-setup-info.json</strong> - Contains video file instructions</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <strong>Create Video Directory Structure</strong>
+            <p>Create this directory structure alongside your HTML file:</p>
+            <div class="file-structure">your-project/
+├── your-design.html
+├── video-setup-info.json
+└── video/
+    ├── demo-video.mp4
+    ├── presentation.webm
+    └── tutorial.mov</div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">5</div>
+            <strong>Place Video Files</strong>
+            <p>Copy your actual video files into the <code>video/</code> directory with the exact filenames specified in the setup guide.</p>
+        </div>
+
+        <h2>Example Video Setup Info</h2>
+        
+        <div class="video-example">
+            <h3>📄 video-setup-info.json</h3>
+            <div class="code">{
+  "htmlFilename": "my-design.html",
+  "videoDirectory": "video",
+  "videoFiles": [
+    {
+      "filename": "demo-video.mp4",
+      "nodeName": "[VIDEO] demo-video.mp4",
+      "width": 1920,
+      "height": 1080,
+      "description": "Video file for frame: [VIDEO] demo-video.mp4"
+    }
+  ],
+  "instructions": [
+    "1. Create a \"video\" directory alongside your HTML file",
+    "2. Place the video files listed below in the video directory",
+    "3. Serve the HTML file with a web server (not file:// protocol)",
+    "4. The video elements will automatically load from the video directory"
+  ]
+}</div>
+        </div>
+
+        <h2>Generated HTML Example</h2>
+        
+        <div class="code">&lt;div data-figma-name="[VIDEO] demo-video.mp4" data-video-frame="true" data-video-filename="demo-video.mp4"&gt;
+  &lt;video controls preload="metadata" style="width: 100%; height: 100%; object-fit: contain;"&gt;
+    &lt;source src="video/demo-video.mp4" type="video/mp4"&gt;
+    &lt;source src="./video/demo-video.mp4" type="video/mp4"&gt;
+    &lt;source src="../video/demo-video.mp4" type="video/mp4"&gt;
+    &lt;source src="/examples/video/demo-video.mp4" type="video/mp4"&gt;
+    &lt;source src="examples/video/demo-video.mp4" type="video/mp4"&gt;
+    Your browser does not support the video tag.
+  &lt;/video&gt;
+&lt;/div&gt;</div>
+
+        <h2>Benefits of This Approach</h2>
+        
+        <ul>
+            <li><strong>🎯 No Path Confusion:</strong> Video files are placed in a predictable location</li>
+            <li><strong>📋 Clear Instructions:</strong> Setup guide tells you exactly what to do</li>
+            <li><strong>🔧 Multiple Path Support:</strong> HTML includes multiple source paths for compatibility</li>
+            <li><strong>📱 Responsive:</strong> Videos scale properly with object-fit: contain</li>
+            <li><strong>🎨 Design Integration:</strong> Videos maintain Figma frame dimensions and positioning</li>
+        </ul>
+
+        <h2>Testing Your Setup</h2>
+        
+        <div class="highlight">
+            <strong>⚠️ Important:</strong> Always serve your HTML files with a web server. Never open them directly in the browser (file:// protocol) as video files won't load properly.
+        </div>
+
+        <div class="step">
+            <div class="step-number">✓</div>
+            <strong>Quick Test Commands</strong>
+            <p>Use any of these commands to serve your files:</p>
+            <div class="code"># Python
+python -m http.server 8000
+
+# Node.js
+npx serve .
+
+# PHP
+php -S localhost:8000</div>
+            <p>Then visit: <code>http://localhost:8000/your-design.html</code></p>
+        </div>
+
+        <h2>Troubleshooting</h2>
+        
+        <div class="warning">
+            <strong>Common Issues:</strong>
+            <ul>
+                <li><strong>Video not loading:</strong> Make sure you're using a web server, not opening the file directly</li>
+                <li><strong>Wrong filename:</strong> Check that video filenames match exactly (case-sensitive)</li>
+                <li><strong>Video directory missing:</strong> Create the <code>video/</code> directory alongside your HTML file</li>
+                <li><strong>Unsupported format:</strong> Use MP4 (H.264) for best browser compatibility</li>
+            </ul>
+        </div>
+
+        <div class="success">
+            <strong>🎉 That's it!</strong> Your Figma design with video elements is now ready to use. The exporter handles all the complex setup automatically, and you just need to place your video files in the right location.
+        </div>
+    </div>
+</body>
+</html>

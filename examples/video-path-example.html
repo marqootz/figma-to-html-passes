@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Path Example - Figma to HTML</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .example-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+            margin: 15px 0;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+        .step {
+            background: #e9ecef;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+        .step-number {
+            background: #007bff;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+        .video-demo {
+            border: 2px dashed #007bff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 Video Path Integration</h1>
+        
+        <div class="success">
+            <strong>✅ New Feature:</strong> You can now specify the full path to your video files directly in the Figma node name, and the plugin will provide exact copy commands!
+        </div>
+
+        <div class="example-section">
+            <h2>New Video Node Name Format</h2>
+            <p>Instead of just the filename, you can now include the full path:</p>
+            
+            <div class="code">[VIDEO] /Users/markmanfrey/downloads/mymov.mp4</div>
+            
+            <p>The plugin will:</p>
+            <ul>
+                <li>Extract the filename: <code>mymov.mp4</code></li>
+                <li>Extract the source path: <code>/Users/markmanfrey/downloads/mymov.mp4</code></li>
+                <li>Generate exact copy commands for you</li>
+            </ul>
+        </div>
+
+        <div class="example-section">
+            <h2>Example Usage</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <strong>In Figma:</strong> Create frames with full paths
+            </div>
+            
+            <div class="code">[VIDEO] /Users/markmanfrey/Downloads/demo-video.mp4
+[VIDEO] /Users/markmanfrey/Movies/presentation.webm
+[VIDEO] /Users/markmanfrey/Videos/tutorial.mov</div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <strong>Export:</strong> Plugin detects video files and shows copy commands
+            </div>
+            
+            <div class="highlight">
+                <strong>Plugin will show:</strong><br>
+                📋 Required video files:<br>
+                • demo-video.mp4 (from: /Users/markmanfrey/Downloads/demo-video.mp4)<br>
+                • presentation.webm (from: /Users/markmanfrey/Movies/presentation.webm)<br>
+                • tutorial.mov (from: /Users/markmanfrey/Videos/tutorial.mov)<br><br>
+                
+                📁 Setup Instructions:<br>
+                1. Create a "video" directory next to your HTML file<br>
+                2. Copy your video files using these commands:<br>
+                <code>mkdir -p video<br>
+                cp "/Users/markmanfrey/Downloads/demo-video.mp4" "./video/demo-video.mp4"<br>
+                cp "/Users/markmanfrey/Movies/presentation.webm" "./video/presentation.webm"<br>
+                cp "/Users/markmanfrey/Videos/tutorial.mov" "./video/tutorial.mov"</code>
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h2>Generated HTML</h2>
+            <p>The plugin generates HTML with the correct video references:</p>
+            
+            <div class="code">&lt;div data-figma-name="[VIDEO] /Users/markmanfrey/Downloads/demo-video.mp4" 
+     data-video-frame="true" 
+     data-video-filename="demo-video.mp4"
+     data-video-source="/Users/markmanfrey/Downloads/demo-video.mp4"&gt;
+  &lt;video controls preload="metadata" style="width: 100%; height: 100%; object-fit: contain;"&gt;
+    &lt;source src="video/demo-video.mp4" type="video/mp4"&gt;
+    &lt;source src="./video/demo-video.mp4" type="video/mp4"&gt;
+    &lt;source src="../video/demo-video.mp4" type="video/mp4"&gt;
+    &lt;source src="/examples/video/demo-video.mp4" type="video/mp4"&gt;
+    &lt;source src="examples/video/demo-video.mp4" type="video/mp4"&gt;
+    Your browser does not support the video tag.
+  &lt;/video&gt;
+&lt;/div&gt;</div>
+        </div>
+
+        <div class="video-demo">
+            <h3>🎬 Demo Video</h3>
+            <p>Here's how a video would look in your exported HTML:</p>
+            
+            <div style="border: 1px solid #ddd; padding: 20px; background: white; border-radius: 5px;">
+                <video controls preload="metadata" style="width: 100%; height: 200px; object-fit: contain;">
+                    <source src="video/test-video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p style="text-align: center; color: #666; margin-top: 10px;">
+                    <em>Video element with multiple source paths for compatibility</em>
+                </p>
+            </div>
+        </div>
+
+        <div class="example-section">
+            <h2>Benefits</h2>
+            
+            <ul>
+                <li><strong>🎯 Exact Copy Commands</strong> - No guessing where your videos are</li>
+                <li><strong>📋 Clear Instructions</strong> - Plugin shows exactly what to copy where</li>
+                <li><strong>🔧 Multiple Path Support</strong> - HTML includes multiple source paths</li>
+                <li><strong>📱 Automatic Scaling</strong> - Videos scale properly with object-fit</li>
+                <li><strong>🎨 Maintains Design</strong> - Videos keep Figma positioning and dimensions</li>
+            </ul>
+        </div>
+
+        <div class="example-section">
+            <h2>Workflow</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <strong>Prepare Videos:</strong> Place your video files anywhere on your system
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <strong>Create Figma Frames:</strong> Name them with full paths like <code>[VIDEO] /full/path/to/video.mp4</code>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <strong>Export Design:</strong> Plugin detects videos and shows copy commands
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <strong>Copy Videos:</strong> Run the provided copy commands
+            </div>
+            
+            <div class="step">
+                <div class="step-number">5</div>
+                <strong>Serve HTML:</strong> Use a web server and your videos will load automatically
+            </div>
+        </div>
+
+        <div class="success">
+            <strong>🎉 That's it!</strong> No more manual directory creation or path confusion. The plugin tells you exactly what to copy where, and your videos load automatically!
+        </div>
+    </div>
+
+    <script>
+        // Demo functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Video Path Example loaded');
+        });
+    </script>
+</body>
+</html>

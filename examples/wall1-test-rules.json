@@ -1,0 +1,234 @@
+{
+  "categories": {
+    "interaction": {
+      "name": "Interaction Rules",
+      "description": "Rules for user interactions between clients",
+      "color": "#667eea"
+    },
+    "feedback": {
+      "name": "Feedback Rules",
+      "description": "Rules for providing feedback between clients",
+      "color": "#764ba2"
+    },
+    "audio": {
+      "name": "Audio Rules",
+      "description": "Rules for triggering audio playback",
+      "color": "#ff6b6b"
+    }
+  },
+  "ruleSets": {
+    "custom-1760195776941": {
+      "name": "wall1-test",
+      "description": "Auto-generated rules for wall1-test.html",
+      "category": "interaction",
+      "project": "Unassigned",
+      "tags": [
+        "auto-generated",
+        "figma-export"
+      ],
+      "rules": [
+        {
+          "name": "play_video_[VIDEO] miami-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_appeared",
+          "sourceFigmaId": "523:506",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "play_video",
+          "targetFigmaId": "684:514",
+          "videoId": "video-684-514",
+          "id": "523-506-684-514-play"
+        },
+        {
+          "name": "play_video_[VIDEO] san-jose-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_appeared",
+          "sourceFigmaId": "523:506",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "play_video",
+          "targetFigmaId": "684:515",
+          "videoId": "video-684-515",
+          "id": "523-506-684-515-play"
+        },
+        {
+          "name": "play_video_[VIDEO] new-orleans-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_appeared",
+          "sourceFigmaId": "523:506",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "play_video",
+          "targetFigmaId": "684:516",
+          "videoId": "video-684-516",
+          "id": "523-506-684-516-play"
+        },
+        {
+          "name": "stop_video_[VIDEO] miami-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_disappeared",
+          "sourceFigmaId": "523:506",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "stop_video",
+          "targetFigmaId": "684:514",
+          "videoId": "video-684-514",
+          "id": "523-506-684-514-stop"
+        },
+        {
+          "name": "stop_video_[VIDEO] san-jose-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_disappeared",
+          "sourceFigmaId": "523:506",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "stop_video",
+          "targetFigmaId": "684:515",
+          "videoId": "video-684-515",
+          "id": "523-506-684-515-stop"
+        },
+        {
+          "name": "stop_video_[VIDEO] new-orleans-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_disappeared",
+          "sourceFigmaId": "523:506",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "stop_video",
+          "targetFigmaId": "684:516",
+          "videoId": "video-684-516",
+          "id": "523-506-684-516-stop"
+        },
+        {
+          "name": "play_lottie_[LOTTIE] list.json",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_appeared",
+          "sourceFigmaId": "523:640",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "play_lottie",
+          "targetFigmaId": "523:685",
+          "lottieId": "lottie-523-685",
+          "id": "523-640-523-685-play"
+        },
+        {
+          "name": "stop_lottie_[LOTTIE] list.json",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_disappeared",
+          "sourceFigmaId": "523:640",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "stop_lottie",
+          "targetFigmaId": "523:685",
+          "lottieId": "lottie-523-685",
+          "id": "523-640-523-685-stop"
+        },
+        {
+          "name": "play_video_[VIDEO] miami-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_appeared",
+          "sourceFigmaId": "582:824",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "play_video",
+          "targetFigmaId": "582:826",
+          "videoId": "video-582-826",
+          "id": "582-824-582-826-play"
+        },
+        {
+          "name": "play_video_[VIDEO] new-orleans-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_appeared",
+          "sourceFigmaId": "582:824",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "play_video",
+          "targetFigmaId": "582:828",
+          "videoId": "video-582-828",
+          "id": "582-824-582-828-play"
+        },
+        {
+          "name": "stop_video_[VIDEO] miami-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_disappeared",
+          "sourceFigmaId": "582:824",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "stop_video",
+          "targetFigmaId": "582:826",
+          "videoId": "video-582-826",
+          "id": "582-824-582-826-stop"
+        },
+        {
+          "name": "stop_video_[VIDEO] new-orleans-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_disappeared",
+          "sourceFigmaId": "582:824",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "stop_video",
+          "targetFigmaId": "582:828",
+          "videoId": "video-582-828",
+          "id": "582-824-582-828-stop"
+        },
+        {
+          "name": "play_video_[VIDEO] miami-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_appeared",
+          "sourceFigmaId": "684:570",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "play_video",
+          "targetFigmaId": "684:572",
+          "videoId": "video-684-572",
+          "id": "684-570-684-572-play"
+        },
+        {
+          "name": "play_video_[VIDEO] san-jose-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_appeared",
+          "sourceFigmaId": "684:570",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "play_video",
+          "targetFigmaId": "684:573",
+          "videoId": "video-684-573",
+          "id": "684-570-684-573-play"
+        },
+        {
+          "name": "play_video_[VIDEO] new-orleans-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_appeared",
+          "sourceFigmaId": "684:570",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "play_video",
+          "targetFigmaId": "684:574",
+          "videoId": "video-684-574",
+          "id": "684-570-684-574-play"
+        },
+        {
+          "name": "stop_video_[VIDEO] miami-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_disappeared",
+          "sourceFigmaId": "684:570",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "stop_video",
+          "targetFigmaId": "684:572",
+          "videoId": "video-684-572",
+          "id": "684-570-684-572-stop"
+        },
+        {
+          "name": "stop_video_[VIDEO] san-jose-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_disappeared",
+          "sourceFigmaId": "684:570",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "stop_video",
+          "targetFigmaId": "684:573",
+          "videoId": "video-684-573",
+          "id": "684-570-684-573-stop"
+        },
+        {
+          "name": "stop_video_[VIDEO] new-orleans-cropped2.mp4",
+          "sourceHtml": "wall1-test.html",
+          "sourceEvent": "figma_element_disappeared",
+          "sourceFigmaId": "684:570",
+          "targetHtml": "wall1-test.html",
+          "targetEvent": "stop_video",
+          "targetFigmaId": "684:574",
+          "videoId": "video-684-574",
+          "id": "684-570-684-574-stop"
+        }
+      ],
+      "variables": {},
+      "isTemplate": false,
+      "active": true
+    }
+  }
+}

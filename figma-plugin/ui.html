@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Figma to HTML</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+            background: #ffffff;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-height: 100%;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            padding: 16px;
+        }
+
+        .header {
+            margin-bottom: 16px;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .section {
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .input-group {
+        }
+
+        .input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e1e5e9;
+            border-radius: 4px;
+            font-size: 12px;
+            background: #fff;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #0d99ff;
+        }
+
+        .button {
+            width: 100%;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .button-primary {
+            background: #0d99ff;
+            color: white;
+        }
+
+        .button-primary:hover:not(:disabled) {
+            background: #0b8ce6;
+        }
+
+        .button-primary:disabled {
+            background: #e1e5e9;
+            color: #8c8c8c;
+            cursor: not-allowed;
+        }
+
+        .button-secondary {
+            background: #f1f3f4;
+            color: #333;
+        }
+
+        .button-secondary:hover {
+            background: #e8eaed;
+        }
+
+        .status {
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .status.info {
+            background: #e7f3ff;
+            color: #0066cc;
+            border: 1px solid #b3d9ff;
+        }
+
+        .status.success {
+            background: #e8f5e8;
+            color: #006600;
+            border: 1px solid #b3d9b3;
+        }
+
+        .status.error {
+            background: #ffeaea;
+            color: #cc0000;
+            border: 1px solid #ffb3b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .node-list {
+            max-height: 120px;
+            overflow-y: auto;
+            border: 1px solid #e1e5e9;
+            border-radius: 4px;
+            background: #f8f9fa;
+        }
+
+        .node-item {
+            padding: 4px 8px;
+            font-size: 11px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .node-item:last-child {
+            border-bottom: none;
+        }
+
+        .node-type {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .section-header {
+            font-size: 13px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e1e5e9;
+        }
+
+        .section-container {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="title">Figma to HTML</div>
+            <div class="subtitle">Passes Methodology - Structure Recreation</div>
+        </div>
+
+        <!-- Showroom Section -->
+        <div class="section-container">
+            <div class="section-header">Showroom</div>
+
+            <!-- Google Drive Status -->
+        <div class="section">
+            <div class="input-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <span style="font-size: 11px; color: #666;">Google Drive:</span>
+                <span id="drive-status" style="font-size: 11px; color: #666;">Checking...</span>
+            </div>
+            <button id="connect-drive" class="button button-secondary" style="display: none; font-size: 11px; padding: 6px;">Connect to Google Drive</button>
+            <button id="settings-drive" class="button button-secondary" style="display: none; font-size: 11px; padding: 6px; margin-top: 4px;">Settings</button>
+            
+            <!-- Settings Panel (hidden by default) -->
+            <div id="oauth-settings" style="display: none; margin-top: 8px; padding: 8px; background: #f8f9fa; border-radius: 4px; font-size: 11px; max-height: 400px; overflow-y: auto;">
+                <!-- Google Drive Folder ID - Always visible, users may need to change it -->
+                <div style="margin-bottom: 12px;">
+                    <div style="font-weight: 600; margin-bottom: 8px;">Google Drive Folder ID</div>
+                    <div style="margin-bottom: 8px;">
+                        <input type="text" id="drive-folder-id" class="input" placeholder="Enter folder ID from URL" style="font-size: 11px; padding: 6px; width: 100%;">
+                        <div style="font-size: 10px; color: #666; margin-top: 2px;">From: drive.google.com/drive/folders/FOLDER_ID</div>
+                        <div id="folder-id-build-time-notice" style="font-size: 10px; color: #0066cc; margin-top: 2px; display: none;">Currently using build-time value. Enter a new ID here to override.</div>
+                    </div>
+                </div>
+
+                <!-- Access Token (Manual Entry - Fallback Only) - Only show if backend/service account not configured -->
+                <div id="access-token-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9; display: none;">
+                    <div style="font-weight: 600; margin-bottom: 8px;">Access Token (Manual Entry - Fallback)</div>
+                    <div style="margin-bottom: 8px;">
+                        <input type="text" id="oauth-access-token" class="input" placeholder="Paste access token here (usually obtained via Connect button)" style="font-size: 11px; padding: 6px; width: 100%;">
+                        <div style="font-size: 10px; color: #666; margin-top: 2px;">Only needed if "Connect" button doesn't work. Use Connect button for automatic token acquisition.</div>
+                    </div>
+                </div>
+
+                <!-- OAuth Client ID - Only shown if NOT configured at build time (removed dynamically) -->
+                <div id="client-id-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9; display: none;">
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #1a73e8;">OAuth Client ID</div>
+                    <div style="margin-bottom: 8px;">
+                        <label style="display: block; margin-bottom: 4px; font-weight: 500;">OAuth Client ID:</label>
+                        <input type="text" id="oauth-client-id" class="input" placeholder="Enter Google OAuth Client ID" style="font-size: 11px; padding: 6px; width: 100%;">
+                        <div style="font-size: 10px; color: #666; margin-top: 2px;">Get from Google Cloud Console → Credentials → OAuth 2.0 Client ID</div>
+                    </div>
+                </div>
+
+                <!-- Backend URL - Only shown if NOT configured at build time (removed dynamically) -->
+                <div id="backend-url-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9; display: none;">
+                    <div style="font-weight: 600; margin-bottom: 8px;">Backend URL</div>
+                    <div style="margin-bottom: 8px;">
+                        <label style="display: block; margin-bottom: 4px; font-weight: 500;">Backend URL (For OAuth/Service Account):</label>
+                        <input type="text" id="auth-backend-url" class="input" placeholder="https://your-backend.com/api" style="font-size: 11px; padding: 6px; width: 100%;">
+                        <div style="font-size: 10px; color: #666; margin-top: 2px;">Required for backend OAuth flow or service account JWT signing</div>
+                    </div>
+                </div>
+
+                <!-- Service Account - Only shown if NOT configured at build time (removed dynamically) -->
+                <details id="service-account-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9; display: none;">
+                    <summary style="font-weight: 600; cursor: pointer; margin-bottom: 8px; color: #666;">Service Account (Advanced - Optional)</summary>
+                    <div style="margin-top: 8px;">
+                        <div style="margin-bottom: 8px;">
+                            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Service Account JSON:</label>
+                            <textarea id="service-account-json" class="input" placeholder='Paste service account JSON here: {"type":"service_account",...}' style="font-size: 10px; padding: 6px; height: 80px; font-family: monospace; resize: vertical; width: 100%;"></textarea>
+                            <div style="font-size: 10px; color: #666; margin-top: 2px;">For managed deployments. Or configure via GOOGLE_SERVICE_ACCOUNT_JSON env var at build time</div>
+                        </div>
+                    </div>
+                </details>
+
+                <button id="save-oauth-settings" class="button button-primary" style="font-size: 11px; padding: 6px; width: 100%; margin-top: 8px;">Save Settings</button>
+            </div>
+        </div>
+
+        <!-- Presentation and Wall Selection (Horizontal) -->
+        <div class="section">
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+                <!-- Presentation Selection -->
+                <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <div class="section-title" style="margin: 0; font-size: 12px;">Presentation:</div>
+                        <button id="refresh-presentations" class="button button-secondary" style="font-size: 10px; padding: 4px 8px; min-width: auto;" title="Refresh presentations list">↻ Refresh</button>
+                    </div>
+                    <div class="input-group">
+                        <select id="presentation-select" class="input" style="margin-bottom: 8px;">
+                            <option value="">Loading presentations...</option>
+                        </select>
+                    </div>
+                    <div class="input-group" id="new-presentation-group" style="display: none;">
+                        <input type="text" id="new-presentation-name" class="input" placeholder="Enter presentation name (e.g., Product Launch 2024)" style="margin-bottom: 4px;">
+                        <div id="presentation-name-error" style="font-size: 10px; color: #cc0000; display: none;"></div>
+                    </div>
+                </div>
+                
+                <!-- Wall Selection -->
+                <div style="flex: 0 0 120px;">
+                    <div class="section-title" style="margin-bottom: 8px; font-size: 12px;">Wall:</div>
+                    <div class="input-group">
+                        <select id="wall-select" class="input">
+                            <option value="wall1">wall1</option>
+                            <option value="wall2">wall2</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- Export Section -->
+            <div class="section">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div class="input-group">
+                        <button id="export-to-showroom" class="button button-primary" disabled>Export to Showroom</button>
+                    </div>
+                    <div class="input-group">
+                        <button id="export-rules" class="button button-secondary" disabled style="background: #9333ea; color: white;">Export Media Control</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- UXR Uxync Section -->
+        <div class="section-container">
+            <div class="section-header">UXR Uxync</div>
+
+            <!-- Local Export Section -->
+            <div class="section">
+                <div class="input-group">
+                    <button id="export-locally" class="button button-secondary" disabled>Export Locally</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        class FigmaToHTMLUI {
+            constructor() {
+                this.chunkedDownloads = new Map(); // Store chunked downloads
+                this.presentations = [];
+                this.isConnected = false;
+                this.pendingSettingsOpen = false; // Track if Settings panel should be opened after processing
+                this.initializeUI();
+                this.setupEventListeners();
+                this.checkGoogleDriveConnection();
+                this.loadPresentations();
+            }
+
+            initializeUI() {
+                console.log('🎨 Figma to HTML UI initialized');
+                
+                // Request settings on initialization to check build-time config
+                // This ensures we know which sections to hide/remove before user opens settings
+                this.sendMessage({ type: 'get-settings' });
+                
+                this.updateExportButton();
+                
+                // Initial resize
+                setTimeout(() => this.resizeUI(), 100);
+            }
+
+            setupEventListeners() {
+                // Google Drive connection
+                document.getElementById('connect-drive').addEventListener('click', () => {
+                    this.connectGoogleDrive();
+                });
+
+                document.getElementById('settings-drive').addEventListener('click', () => {
+                    this.toggleOAuthSettings();
+                });
+
+                document.getElementById('save-oauth-settings').addEventListener('click', () => {
+                    this.saveOAuthSettings();
+                });
+
+                // Presentation dropdown
+                document.getElementById('presentation-select').addEventListener('change', (e) => {
+                    this.handlePresentationChange(e.target.value);
+                });
+
+                // Refresh presentations button
+                document.getElementById('refresh-presentations').addEventListener('click', () => {
+                    this.refreshPresentations();
+                });
+
+                // New presentation name input
+                document.getElementById('new-presentation-name').addEventListener('input', (e) => {
+                    this.validatePresentationName(e.target.value);
+                });
+
+                // Export buttons
+                document.getElementById('export-to-showroom').addEventListener('click', () => {
+                    this.exportToShowroom();
+                });
+
+                document.getElementById('export-locally').addEventListener('click', () => {
+                    this.exportLocally();
+                });
+
+                document.getElementById('export-rules').addEventListener('click', () => {
+                    this.exportRules();
+                });
+
+                // Message listener
+                window.addEventListener('message', (event) => {
+                    if (event.data.pluginMessage) {
+                        this.handleMessage(event.data.pluginMessage);
+                    }
+                });
+            }
+
+            async checkGoogleDriveConnection() {
+                this.sendMessage({ type: 'check-drive-connection' });
+            }
+
+            async connectGoogleDrive() {
+                this.showStatus('Connecting to Google Drive...', 'info');
+                this.sendMessage({ type: 'connect-google-drive' });
+            }
+
+            async toggleOAuthSettings() {
+                const settingsDiv = document.getElementById('oauth-settings');
+                const isVisible = settingsDiv.style.display !== 'none';
+                
+                if (!isVisible) {
+                    // Request settings and wait for response before showing panel
+                    // This ensures build-time config is checked and sections removed first
+                    this.sendMessage({ type: 'get-settings' });
+                    // Panel will be shown after settings-loaded message is processed
+                    this.pendingSettingsOpen = true;
+                } else {
+                    settingsDiv.style.display = 'none';
+                    this.pendingSettingsOpen = false;
+                    this.resizeUI();
+                }
+            }
+
+            resizeUI() {
+                // Calculate the height of the content and resize the plugin UI
+                const body = document.body;
+                // Use scrollHeight to get the full content height
+                const height = Math.min(Math.max(body.scrollHeight, 300), 600); // Min 300px, max 600px
+                this.sendMessage({ 
+                    type: 'resize-ui', 
+                    height: height 
+                });
+            }
+
+            async saveOAuthSettings() {
+                // Get values only if elements exist (they might be removed if configured at build time)
+                const serviceAccountElement = document.getElementById('service-account-json');
+                const clientIdElement = document.getElementById('oauth-client-id');
+                const accessTokenElement = document.getElementById('oauth-access-token');
+                const folderIdElement = document.getElementById('drive-folder-id');
+                const backendUrlElement = document.getElementById('auth-backend-url');
+                
+                const serviceAccountJson = serviceAccountElement ? serviceAccountElement.value.trim() : '';
+                const clientId = clientIdElement ? clientIdElement.value.trim() : '';
+                const accessToken = accessTokenElement ? accessTokenElement.value.trim() : '';
+                const folderId = folderIdElement ? folderIdElement.value.trim() : '';
+                const backendUrl = backendUrlElement ? backendUrlElement.value.trim() : '';
+
+                if (serviceAccountJson) {
+                    // Validate JSON
+                    try {
+                        JSON.parse(serviceAccountJson);
+                        this.sendMessage({
+                            type: 'store-service-account-key',
+                            serviceAccountKey: serviceAccountJson
+                        });
+                    } catch (error) {
+                        this.showStatus('Invalid JSON format in Service Account JSON field', 'error');
+                        return;
+                    }
+                }
+
+                if (clientId) {
+                    this.sendMessage({
+                        type: 'store-client-id',
+                        clientId: clientId
+                    });
+                }
+
+                if (accessToken) {
+                    this.sendMessage({
+                        type: 'store-access-token',
+                        accessToken: accessToken
+                    });
+                }
+
+                if (folderId) {
+                    this.sendMessage({
+                        type: 'store-folder-id',
+                        folderId: folderId
+                    });
+                }
+
+                if (backendUrl) {
+                    this.sendMessage({
+                        type: 'store-backend-url',
+                        backendUrl: backendUrl
+                    });
+                }
+
+                // At minimum, folder ID should be set
+                if (!folderId) {
+                    this.showStatus('Please enter a Folder ID', 'error');
+                    return;
+                }
+
+                this.showStatus('Settings saved. Checking connection...', 'info');
+                
+                // Reload settings to show updated values
+                setTimeout(() => {
+                    this.sendMessage({ type: 'get-settings' });
+                    this.checkGoogleDriveConnection();
+                }, 500);
+            }
+
+            async loadPresentations() {
+                this.sendMessage({ type: 'fetch-presentations' });
+            }
+
+            async refreshPresentations() {
+                const refreshButton = document.getElementById('refresh-presentations');
+                const select = document.getElementById('presentation-select');
+                
+                // Show loading state
+                refreshButton.disabled = true;
+                refreshButton.textContent = '↻ Refreshing...';
+                select.innerHTML = '<option value="">Refreshing...</option>';
+                
+                // Reload presentations
+                this.showStatus('Refreshing presentations list...', 'info');
+                await this.loadPresentations();
+                
+                // Reset button after a short delay
+                setTimeout(() => {
+                    refreshButton.disabled = false;
+                    refreshButton.textContent = '↻ Refresh';
+                }, 1000);
+            }
+
+            handlePresentationChange(value) {
+                const newPresentationGroup = document.getElementById('new-presentation-group');
+                const newPresentationName = document.getElementById('new-presentation-name');
+                
+                if (value === 'new') {
+                    newPresentationGroup.style.display = 'block';
+                    newPresentationName.focus();
+                } else {
+                    newPresentationGroup.style.display = 'none';
+                    newPresentationName.value = '';
+                }
+                this.updateExportButton();
+            }
+
+            validatePresentationName(name) {
+                const errorDiv = document.getElementById('presentation-name-error');
+                if (!name || name.trim().length === 0) {
+                    errorDiv.textContent = 'Please enter a presentation name';
+                    errorDiv.style.display = 'block';
+                    return false;
+                }
+                errorDiv.style.display = 'none';
+                return true;
+            }
+
+            sanitizePresentationName(input) {
+                if (!input || typeof input !== 'string') {
+                    return null;
+                }
+                
+                let sanitized = input
+                    .trim()
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+                
+                if (sanitized.length < 3) {
+                    return null;
+                }
+                
+                if (sanitized.length > 50) {
+                    sanitized = sanitized.substring(0, 50).replace(/-$/, '');
+                }
+                
+                return sanitized;
+            }
+
+            async exportToShowroom() {
+                const presentationSelect = document.getElementById('presentation-select');
+                const selectedPresentation = presentationSelect.value;
+                const newPresentationName = document.getElementById('new-presentation-name').value;
+                const wallSelect = document.getElementById('wall-select');
+                const selectedWall = wallSelect.value;
+
+                if (!this.isConnected) {
+                    this.showStatus('Please connect to Google Drive first', 'error');
+                    return;
+                }
+
+                let presentationName = null;
+
+                if (selectedPresentation === 'new') {
+                    if (!this.validatePresentationName(newPresentationName)) {
+                        return;
+                    }
+                    presentationName = this.sanitizePresentationName(newPresentationName);
+                    if (!presentationName) {
+                        this.showStatus('Invalid presentation name. Please enter at least 3 characters.', 'error');
+                        return;
+                    }
+                } else if (selectedPresentation) {
+                    presentationName = selectedPresentation;
+                } else {
+                    this.showStatus('Please select a presentation', 'error');
+                    return;
+                }
+
+                this.showStatus('Preparing export...', 'info');
+                this.setExportButtonEnabled(false);
+
+                // Auto-gen slide nav is always enabled for showroom exports
+                this.sendMessage({
+                    type: 'export-to-showroom',
+                    presentationName: presentationName,
+                    isNewPresentation: selectedPresentation === 'new',
+                    wallName: selectedWall,
+                    autoGenerateNavigation: true
+                });
+            }
+
+            async exportLocally() {
+                this.showStatus('Generating HTML from selection...', 'info');
+                // Disable local export button during export, but keep showroom buttons enabled
+                const exportLocallyButton = document.getElementById('export-locally');
+                exportLocallyButton.disabled = true;
+                
+                // Auto-gen slide nav is not needed for local exports (UXR Uxync)
+                this.sendMessage({
+                    type: 'generate-html',
+                    useSelection: true,
+                    autoGenerateNavigation: false,
+                    exportLocally: true
+                });
+            }
+
+            async exportSelected() {
+                // Legacy method - redirects to exportLocally
+                this.exportLocally();
+            }
+
+            async exportRules() {
+                const presentationSelect = document.getElementById('presentation-select');
+                const selectedPresentation = presentationSelect.value;
+                const newPresentationName = document.getElementById('new-presentation-name').value;
+                const wallSelect = document.getElementById('wall-select');
+                const selectedWall = wallSelect.value;
+
+                if (!this.isConnected) {
+                    this.showStatus('Please connect to Google Drive first', 'error');
+                    return;
+                }
+
+                let presentationName = null;
+
+                if (selectedPresentation === 'new') {
+                    if (!this.validatePresentationName(newPresentationName)) {
+                        return;
+                    }
+                    presentationName = this.sanitizePresentationName(newPresentationName);
+                    if (!presentationName) {
+                        this.showStatus('Invalid presentation name. Please enter at least 3 characters.', 'error');
+                        return;
+                    }
+                } else if (selectedPresentation) {
+                    presentationName = selectedPresentation;
+                } else {
+                    this.showStatus('Please select a presentation', 'error');
+                    return;
+                }
+
+                this.showStatus('Exporting media control rules...', 'info');
+                this.setExportButtonEnabled(false);
+
+                this.sendMessage({
+                    type: 'export-rules-to-showroom',
+                    presentationName: presentationName,
+                    isNewPresentation: selectedPresentation === 'new',
+                    wallName: selectedWall
+                });
+            }
+
+            handleMessage(message) {
+                switch (message.type) {
+                    case 'plugin-ready':
+                        this.showStatus('Plugin ready!', 'success');
+                        break;
+                    case 'drive-connection-status':
+                        this.handleDriveConnectionStatus(message);
+                        break;
+                    case 'presentations-loaded':
+                        this.handlePresentationsLoaded(message);
+                        break;
+                    case 'presentation-conflict':
+                        this.handlePresentationConflict(message);
+                        break;
+                    case 'export-to-showroom-started':
+                        this.showStatus('Exporting to Showroom...', 'info');
+                        break;
+                    case 'export-to-showroom-complete':
+                        this.showStatus(`✅ Exported to: ${message.path}`, 'success');
+                        this.setExportButtonEnabled(true);
+                        break;
+                    case 'export-to-showroom-error':
+                        this.showStatus(`Error: ${message.message}`, 'error');
+                        this.setExportButtonEnabled(true);
+                        break;
+                    case 'oauth-authorization-started':
+                        this.showStatus(message.message || 'Please authorize in the browser window', 'info');
+                        break;
+                    case 'prompt-client-id':
+                    case 'prompt-access-token':
+                        this.showStatus(message.message || 'Please configure OAuth settings', 'info');
+                        // Show settings panel
+                        document.getElementById('oauth-settings').style.display = 'block';
+                        break;
+                    case 'success':
+                        this.showStatus(message.message, 'success');
+                        break;
+                    case 'settings-loaded':
+                        this.handleSettingsLoaded(message);
+                        // If Settings panel was requested to be opened, show it now after processing
+                        if (this.pendingSettingsOpen) {
+                            const settingsDiv = document.getElementById('oauth-settings');
+                            if (settingsDiv) {
+                                settingsDiv.style.display = 'block';
+                            }
+                            this.pendingSettingsOpen = false;
+                            // Resize UI after showing settings
+                            setTimeout(() => this.resizeUI(), 100);
+                        }
+                        break;
+                    case 'selection-data':
+                        this.handleSelectionData(message);
+                        break;
+                    case 'generation-started':
+                        this.showStatus('Generation started...', 'info');
+                        break;
+                    case 'generation-complete':
+                        this.showStatus('Export complete!', 'success');
+                        this.setExportButtonEnabled(true);
+                        // Re-enable local export button
+                        const exportLocallyButton = document.getElementById('export-locally');
+                        if (exportLocallyButton) {
+                            exportLocallyButton.disabled = false;
+                        }
+                        break;
+                    case 'generation-error':
+                        this.showStatus(`Error: ${message.message}`, 'error');
+                        this.setExportButtonEnabled(true);
+                        // Re-enable local export button
+                        const exportLocallyButtonError = document.getElementById('export-locally');
+                        if (exportLocallyButtonError) {
+                            exportLocallyButtonError.disabled = false;
+                        }
+                        break;
+                    case 'rules-generated':
+                        this.handleRulesGenerated(message);
+                        break;
+                    case 'export-rules-to-showroom-started':
+                        this.showStatus('Exporting media control rules to showroom...', 'info');
+                        break;
+                    case 'export-rules-to-showroom-complete':
+                        this.showStatus(`✅ Exported to: ${message.path}`, 'success');
+                        this.setExportButtonEnabled(true);
+                        break;
+                    case 'export-rules-to-showroom-error':
+                        this.showStatus(`Error: ${message.message}`, 'error');
+                        this.setExportButtonEnabled(true);
+                        break;
+                    case 'rules-error':
+                        this.showStatus(`Rules generation error: ${message.message}`, 'error');
+                        this.setExportButtonEnabled(true);
+                        break;
+                    case 'video-files-detected':
+                        this.handleVideoFilesDetected(message);
+                        break;
+                    case 'image-files-detected':
+                        this.handleImageFilesDetected(message);
+                        break;
+                    case 'video-copy-complete':
+                        this.handleVideoCopyComplete(message);
+                        break;
+                    case 'video-copy-error':
+                        this.handleVideoCopyError(message);
+                        break;
+                    case 'copy-file-request':
+                        this.handleCopyFileRequest(message);
+                        break;
+                    case 'download-file':
+                        this.handleDownloadFile(message);
+                        break;
+                    case 'download-file-chunk':
+                        this.handleDownloadFileChunk(message);
+                        break;
+                    case 'error':
+                        this.showStatus(`Error: ${message.message}`, 'error');
+                        break;
+                    default:
+                        console.warn('Unknown message type:', message.type);
+                }
+            }
+
+            handleSettingsLoaded(message) {
+                const buildTimeConfig = message.buildTimeConfig || {};
+                console.log('🔧 Loading settings, build-time config:', buildTimeConfig);
+                
+                // Get all section elements (they should exist in DOM but be hidden by default)
+                const clientIdSection = document.getElementById('client-id-section');
+                const backendUrlSection = document.getElementById('backend-url-section');
+                const serviceAccountSection = document.getElementById('service-account-section');
+                const accessTokenSection = document.getElementById('access-token-section');
+                const folderIdNotice = document.getElementById('folder-id-build-time-notice');
+                
+                // Remove Client ID section if configured at build time
+                if (buildTimeConfig.hasClientId) {
+                    if (clientIdSection && clientIdSection.parentNode) {
+                        console.log('🗑️  Removing Client ID section (configured at build time)');
+                        clientIdSection.remove();
+                    }
+                } else {
+                    // Show and populate Client ID if not at build time
+                    if (clientIdSection) {
+                        clientIdSection.style.display = 'block';
+                        const clientIdInput = document.getElementById('oauth-client-id');
+                        if (clientIdInput) {
+                            if (message.clientId) {
+                                clientIdInput.value = message.clientId;
+                            }
+                        }
+                    }
+                }
+                
+                // Remove Backend URL section if configured at build time
+                if (buildTimeConfig.hasBackendUrl) {
+                    if (backendUrlSection && backendUrlSection.parentNode) {
+                        console.log('🗑️  Removing Backend URL section (configured at build time)');
+                        backendUrlSection.remove();
+                    }
+                } else {
+                    // Show Backend URL if not at build time
+                    if (backendUrlSection) {
+                        backendUrlSection.style.display = 'block';
+                        const backendUrlInput = document.getElementById('auth-backend-url');
+                        if (backendUrlInput && message.backendUrl) {
+                            backendUrlInput.value = message.backendUrl;
+                        }
+                    }
+                }
+                
+                // Remove Service Account section if configured at build time
+                if (buildTimeConfig.hasServiceAccount) {
+                    if (serviceAccountSection && serviceAccountSection.parentNode) {
+                        console.log('🗑️  Removing Service Account section (configured at build time)');
+                        serviceAccountSection.remove();
+                    }
+                } else {
+                    // Show Service Account if not at build time
+                    if (serviceAccountSection) {
+                        serviceAccountSection.style.display = 'block';
+                        const saInput = document.getElementById('service-account-json');
+                        if (saInput && message.hasServiceAccountKey && !saInput.value) {
+                            saInput.placeholder = 'Service account key is set (hidden for security)';
+                        }
+                    }
+                }
+                
+                // Access Token section - always show as fallback option
+                // Even if backend/service account is configured, users may need manual entry if backend fails
+                if (accessTokenSection) {
+                    // Always show access token field (users may need it if backend fails)
+                    accessTokenSection.style.display = 'block';
+                    const tokenInput = document.getElementById('oauth-access-token');
+                    if (tokenInput) {
+                        if (message.hasAccessToken && !tokenInput.value) {
+                            tokenInput.placeholder = 'Access token is set (hidden for security)';
+                        } else {
+                            tokenInput.placeholder = 'Paste access token here (fallback if Connect button fails)';
+                        }
+                        // Ensure input is enabled and focusable
+                        tokenInput.disabled = false;
+                        tokenInput.readOnly = false;
+                    }
+                }
+                
+                // Folder ID - always visible (users can override build-time value)
+                const folderIdInput = document.getElementById('drive-folder-id');
+                if (folderIdInput) {
+                    if (message.folderId) {
+                        folderIdInput.value = message.folderId;
+                        console.log('📋 Loaded folder ID into settings:', message.folderId);
+                    } else {
+                        folderIdInput.value = '';
+                    }
+                }
+                
+                // Show notice if using build-time folder ID (but field is still visible for override)
+                if (buildTimeConfig.hasFolderId && folderIdNotice) {
+                    folderIdNotice.style.display = 'block';
+                } else if (folderIdNotice) {
+                    folderIdNotice.style.display = 'none';
+                }
+            }
+
+            handleDriveConnectionStatus(message) {
+                this.isConnected = message.connected || false;
+                const statusElement = document.getElementById('drive-status');
+                const connectButton = document.getElementById('connect-drive');
+                const settingsButton = document.getElementById('settings-drive');
+                
+                if (this.isConnected) {
+                    if (message.folderId) {
+                        statusElement.textContent = `✓ Connected (${message.folderId.substring(0, 12)}...)`;
+                        statusElement.title = `Folder ID: ${message.folderId}`;
+                    } else {
+                        statusElement.textContent = '✓ Connected';
+                    }
+                    statusElement.style.color = '#006600';
+                    connectButton.style.display = 'none';
+                    settingsButton.style.display = 'block';
+                } else {
+                    statusElement.textContent = message.message || 'Not connected';
+                    statusElement.style.color = '#cc0000';
+                    connectButton.style.display = 'block';
+                    settingsButton.style.display = 'block';
+                }
+                this.updateExportButton();
+                
+                // Reload presentations if connected
+                if (this.isConnected) {
+                    this.loadPresentations();
+                }
+            }
+
+            handlePresentationsLoaded(message) {
+                this.presentations = message.presentations || [];
+                const select = document.getElementById('presentation-select');
+                const refreshButton = document.getElementById('refresh-presentations');
+                
+                select.innerHTML = '';
+                
+                if (this.presentations.length === 0) {
+                    select.innerHTML = '<option value="">No presentations found</option>';
+                    if (message.message) {
+                        this.showStatus(message.message, 'info');
+                    }
+                } else {
+                    this.presentations.forEach(presentation => {
+                        const option = document.createElement('option');
+                        option.value = presentation;
+                        option.textContent = presentation;
+                        select.appendChild(option);
+                    });
+                    
+                    if (message.message && this.presentations.length > 0) {
+                        this.showStatus(message.message, 'success');
+                    }
+                }
+                
+                // Add separator and "New Presentation" option
+                const separator = document.createElement('option');
+                separator.disabled = true;
+                separator.textContent = '─────────────────';
+                select.appendChild(separator);
+                
+                const newOption = document.createElement('option');
+                newOption.value = 'new';
+                newOption.textContent = '[+ New Presentation]';
+                select.appendChild(newOption);
+                
+                // Reset refresh button state
+                if (refreshButton) {
+                    refreshButton.disabled = false;
+                    refreshButton.textContent = '↻ Refresh';
+                }
+                
+                this.updateExportButton();
+            }
+
+            async handlePresentationConflict(message) {
+                const sanitizedName = message.sanitizedName;
+                const suggestedName = message.suggestedName;
+                
+                // Show conflict dialog (simplified - in production would be a proper modal)
+                const useSuggested = confirm(
+                    `⚠️ Name Conflict\n\n` +
+                    `The name "${sanitizedName}" already exists.\n` +
+                    `Suggested name: "${suggestedName}"\n\n` +
+                    `Click OK to use the suggested name, or Cancel to edit.`
+                );
+                
+                if (useSuggested) {
+                    this.sendMessage({
+                        type: 'resolve-presentation-conflict',
+                        useSuggested: true,
+                        suggestedName: suggestedName,
+                        originalData: message.originalData
+                    });
+                } else {
+                    this.setExportButtonEnabled(true);
+                    document.getElementById('new-presentation-name').focus();
+                }
+            }
+
+            handleSelectionData(data) {
+                // Selection handling removed - buttons always enabled
+                this.updateExportButton();
+            }
+
+            handleVideoFilesDetected(message) {
+                const videoFiles = message.videoFiles || [];
+                if (videoFiles.length > 0) {
+                    this.showStatus(`🎥 Found ${videoFiles.length} video file(s): ${videoFiles.map(f => f.filename).join(', ')}`, 'info');
+                    
+                    // Store video files for later use
+                    this.videoFiles = videoFiles;
+                } else {
+                    // Only log to console for debugging, don't show UI message for no videos
+                    console.log('ℹ️ No video files detected in design');
+                }
+            }
+
+            handleImageFilesDetected(message) {
+                const imageFiles = message.imageFiles || [];
+                if (imageFiles.length > 0) {
+                    this.showStatus(`🖼️ Found ${imageFiles.length} image file(s): ${imageFiles.map(f => f.filename).join(', ')}`, 'info');
+                    
+                    // Store image files for later use
+                    this.imageFiles = imageFiles;
+                } else {
+                    // Only log to console for debugging, don't show UI message for no images
+                    console.log('ℹ️ No image files detected in design');
+                }
+            }
+
+            handleRulesGenerated(message) {
+                this.showStatus(`✅ Generated ${message.metadata.ruleCount} rules`, 'success');
+                this.setExportButtonEnabled(true);
+                
+                // Download the rules JSON file
+                if (message.rulesJson && message.filename) {
+                    this.downloadFile(message.rulesJson, message.filename);
+                }
+            }
+
+            handleVideoCopyComplete(message) {
+                const videoFiles = message.videoFiles || [];
+                this.showStatus(`✅ Successfully processed ${videoFiles.length} video file(s)`, 'success');
+            }
+
+            handleVideoCopyError(message) {
+                this.showStatus(`❌ Error processing video files: ${message.message}`, 'error');
+            }
+
+            handleCopyFileRequest(message) {
+                // Note: In a Figma plugin environment, we can't directly copy files
+                // This is just a placeholder for the copy request
+                console.log(`Copy request: ${message.sourcePath} → ${message.destPath}`);
+            }
+
+            handleDownloadFileChunk(data) {
+                try {
+                    const filename = data.filename || 'figma-structure.html';
+                    const chunkIndex = data.chunkIndex || 0;
+                    const totalChunks = data.totalChunks || 1;
+                    
+                    console.log(`📦 Received chunk ${chunkIndex + 1}/${totalChunks} for ${filename}`);
+                    
+                    // Initialize chunk storage for this file if not exists
+                    if (!this.chunkedDownloads.has(filename)) {
+                        this.chunkedDownloads.set(filename, {
+                            chunks: [],
+                            totalChunks: totalChunks,
+                            videoFiles: [],
+                            imageFiles: [],
+                            mimeType: data.mimeType || 'text/html'
+                        });
+                    }
+                    
+                    const fileData = this.chunkedDownloads.get(filename);
+                    fileData.chunks[chunkIndex] = data.content;
+                    
+                    // Store video and image files from first chunk
+                    if (chunkIndex === 0) {
+                        if (data.videoFiles) {
+                            fileData.videoFiles = data.videoFiles;
+                        }
+                        if (data.imageFiles) {
+                            fileData.imageFiles = data.imageFiles;
+                        }
+                    }
+                    
+                    // Check if we have all chunks
+                    if (fileData.chunks.length === totalChunks && fileData.chunks.every(chunk => chunk !== undefined)) {
+                        console.log(`✅ All chunks received for ${filename}, assembling file...`);
+                        
+                        // Assemble the complete file
+                        const completeContent = fileData.chunks.join('');
+                        
+                        // Create download data object
+                        const downloadData = {
+                            content: completeContent,
+                            filename: filename,
+                            mimeType: fileData.mimeType,
+                            videoFiles: fileData.videoFiles,
+                            imageFiles: fileData.imageFiles
+                        };
+                        
+                        // Handle the complete file download
+                        this.handleDownloadFile(downloadData);
+                        
+                        // Clean up chunked data
+                        this.chunkedDownloads.delete(filename);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error handling download chunk:', error);
+                    this.showStatus(`❌ Error processing file chunk: ${error.message}`, 'error');
+                }
+            }
+
+            handleDownloadFile(data) {
+                try {
+                    // Validate data
+                    if (!data.content) {
+                        console.error('No content provided for download');
+                        this.showStatus('Error: No content to download', 'error');
+                        return;
+                    }
+
+                    console.log('📄 Downloading file:', {
+                        filename: data.filename,
+                        contentLength: data.content.length,
+                        hasVideoFiles: data.videoFiles ? data.videoFiles.length : 0,
+                        hasImageFiles: data.imageFiles ? data.imageFiles.length : 0
+                    });
+
+                    // Try multiple download methods
+                    let downloadSuccess = false;
+
+                    // Method 1: Standard blob download
+                    try {
+                const blob = new Blob([data.content], { type: data.mimeType || 'text/html' });
+                const url = URL.createObjectURL(blob);
+                
+                        if (url && url.startsWith('blob:')) {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = data.filename || 'figma-structure.html';
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                
+                
+                a.click();
+                document.body.removeChild(a);
+                
+                            // Delay URL revocation
+                            setTimeout(() => {
+                                try {
+                URL.revokeObjectURL(url);
+                                } catch (e) {
+                                    console.warn('Could not revoke blob URL:', e);
+                                }
+                            }, 2000);
+                            
+                            downloadSuccess = true;
+                            this.showStatus('✅ HTML file downloaded successfully!', 'success');
+                        }
+                    } catch (blobError) {
+                        console.warn('Blob download failed, trying alternative method:', blobError);
+                    }
+
+                    // Method 2: Data URL fallback
+                    if (!downloadSuccess) {
+                        try {
+                            const dataUrl = 'data:text/html;charset=utf-8,' + encodeURIComponent(data.content);
+                            const a = document.createElement('a');
+                            a.href = dataUrl;
+                            a.download = data.filename || 'figma-structure.html';
+                            a.style.display = 'none';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            
+                            downloadSuccess = true;
+                            this.showStatus('✅ HTML file downloaded successfully! (fallback method)', 'success');
+                        } catch (dataUrlError) {
+                            console.error('Data URL download also failed:', dataUrlError);
+                            this.showStatus('❌ Download failed. Please try again.', 'error');
+                        }
+                    }
+                    
+                    // Show media setup instructions if video or image files are detected
+                    if (downloadSuccess && ((data.videoFiles && data.videoFiles.length > 0) || (data.imageFiles && data.imageFiles.length > 0))) {
+                        setTimeout(() => {
+                            this.showMediaSetupInstructions(data.videoFiles || [], data.imageFiles || [], data.filename);
+                        }, 1000);
+                    } else if (downloadSuccess && (!data.videoFiles || data.videoFiles.length === 0) && (!data.imageFiles || data.imageFiles.length === 0)) {
+                        // For exports without media files, just show a simple success message
+                        setTimeout(() => {
+                            this.showStatus('🎉 Export complete! No media files detected in this design.', 'success');
+                        }, 500);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error downloading file:', error);
+                    this.showStatus(`❌ Error downloading file: ${error.message}`, 'error');
+                }
+            }
+
+            showMediaSetupInstructions(videoFiles, imageFiles, htmlFilename) {
+                let instructions = '';
+                
+                if (videoFiles.length > 0) {
+                    const videoList = videoFiles.map(f => {
+                        const sourcePath = f.sourcePath || 'Unknown path';
+                        return `• ${f.filename} (from: ${sourcePath})`;
+                    }).join('\n');
+                    
+                    const videoCopyCommands = videoFiles.map(f => {
+                        const sourcePath = f.sourcePath || 'SOURCE_PATH';
+                        return `cp "${sourcePath}" "./video/${f.filename}"`;
+                    }).join('\n');
+                    
+                    instructions += `🎥 Video files detected in your design!
+                    
+📋 Required video files:
+${videoList}
+
+📁 Video Setup Instructions:
+1. Create a "video" directory next to your HTML file
+2. Copy your video files using these commands:
+\`\`\`bash
+mkdir -p video
+${videoCopyCommands}
+\`\`\`
+
+`;
+                }
+                
+                if (imageFiles.length > 0) {
+                    const imageList = imageFiles.map(f => {
+                        const sourcePath = f.sourcePath || 'Unknown path';
+                        return `• ${f.filename} (from: ${sourcePath})`;
+                    }).join('\n');
+                    
+                    const imageCopyCommands = imageFiles.map(f => {
+                        const sourcePath = f.sourcePath || 'SOURCE_PATH';
+                        return `cp "${sourcePath}" "./img/${f.filename}"`;
+                    }).join('\n');
+                    
+                    instructions += `🖼️ Image files detected in your design!
+                    
+📋 Required image files:
+${imageList}
+
+📁 Image Setup Instructions:
+1. Create an "img" directory next to your HTML file
+2. Copy your image files using these commands:
+\`\`\`bash
+mkdir -p img
+${imageCopyCommands}
+\`\`\`
+
+`;
+                }
+                
+                if (videoFiles.length > 0 || imageFiles.length > 0) {
+                    const directoryStructure = `${htmlFilename}
+${videoFiles.length > 0 ? `video/\n${videoFiles.map(f => `├── ${f.filename}`).join('\n')}` : ''}
+${imageFiles.length > 0 ? `img/\n${imageFiles.map(f => `├── ${f.filename}`).join('\n')}` : ''}`;
+                    
+                    instructions += `📂 Final directory structure:
+${directoryStructure}
+
+🌐 Web server examples:
+• python -m http.server 8000
+• npx serve .
+• php -S localhost:8000
+
+✅ That's it! Your media files will load automatically.`;
+                    
+                    this.showStatus(instructions, 'info');
+                }
+            }
+
+            showVideoSetupInstructions(videoFiles, htmlFilename) {
+                // Keep this method for backward compatibility
+                this.showMediaSetupInstructions(videoFiles, [], htmlFilename);
+            }
+
+            createVideoReadme(videoFiles, htmlFilename) {
+                const videoList = videoFiles.map(f => `- **${f.filename}** (from frame: ${f.nodeName})`).join('\n');
+                
+                return `# Video Directory
+
+This directory contains the video files referenced by your HTML design.
+
+## Required Video Files
+
+${videoList}
+
+## Instructions
+
+1. **Create the directory structure** as shown below
+2. **Replace the placeholder files** (${videoFiles.map(f => f.filename + '.txt').join(', ')}) with your actual video files
+3. **Keep the same filenames** as specified above (remove the .txt extension)
+4. **Supported formats**: MP4 (recommended), WebM, OGG
+5. **Serve with a web server** - don't open the HTML file directly in the browser
+
+## File Structure
+
+\`\`\`
+${htmlFilename}
+video/
+├── README.md (this file)
+${videoFiles.map(f => `├── ${f.filename} (your video file)`).join('\n')}
+\`\`\`
+
+## Testing
+
+Use a web server to serve your files:
+\`\`\`bash
+# Python
+python -m http.server 8000
+
+# Node.js
+npx serve .
+
+# PHP
+php -S localhost:8000
+\`\`\`
+
+Then visit: \`http://localhost:8000/${htmlFilename}\`
+
+## Troubleshooting
+
+- **Video not loading**: Make sure you're using a web server, not opening the file directly
+- **Wrong filename**: Check that video filenames match exactly (case-sensitive)
+- **Unsupported format**: Use MP4 (H.264) for best browser compatibility
+`;
+            }
+
+            createVideoPlaceholder(videoFile) {
+                return `# Placeholder for: ${videoFile.filename}
+
+This is a placeholder file for the video: ${videoFile.filename}
+
+## Frame Information
+- **Figma Frame**: ${videoFile.nodeName}
+- **Dimensions**: ${videoFile.width} x ${videoFile.height} pixels
+- **Node ID**: ${videoFile.nodeId}
+
+## Instructions
+1. Delete this placeholder file (${videoFile.filename}.txt)
+2. Add your actual video file with the name: ${videoFile.filename}
+3. Make sure the video file is in a supported format (MP4 recommended)
+
+## Supported Video Formats
+- MP4 (H.264 codec) - Recommended
+- WebM
+- OGG
+
+## File Size Recommendations
+- Keep video files under 50MB for web performance
+- Use appropriate compression for your use case
+- Consider using multiple quality versions for responsive design
+`;
+            }
+
+
+            generateDefaultFilename() {
+                // Use the first selected node name as the default filename
+                const selectionCount = document.getElementById('selection-count');
+                if (selectionCount && selectionCount.textContent) {
+                    const text = selectionCount.textContent;
+                    // Look for node names in the selection info
+                    // This will be enhanced when we get the actual node data
+                    if (text.includes('1 node')) {
+                        return 'node-export.html';
+                    } else if (text.includes('nodes')) {
+                        const match = text.match(/(\d+) nodes/);
+                        if (match) {
+                            return `nodes-${match[1]}-export.html`;
+                        }
+                    }
+                }
+                return 'figma-export.html';
+            }
+
+            updateExportButton() {
+                const exportToShowroomButton = document.getElementById('export-to-showroom');
+                const exportLocallyButton = document.getElementById('export-locally');
+                const exportRulesButton = document.getElementById('export-rules');
+                const presentationSelect = document.getElementById('presentation-select');
+                const newPresentationName = document.getElementById('new-presentation-name');
+                
+                const hasPresentation = presentationSelect.value && 
+                    (presentationSelect.value !== 'new' || newPresentationName.value.trim().length > 0);
+                
+                exportToShowroomButton.disabled = !this.isConnected || !hasPresentation;
+                exportLocallyButton.disabled = false;
+                exportRulesButton.disabled = false;
+            }
+
+            setExportButtonEnabled(enabled, includeLocal = false) {
+                const exportToShowroomButton = document.getElementById('export-to-showroom');
+                const exportLocallyButton = document.getElementById('export-locally');
+                const exportRulesButton = document.getElementById('export-rules');
+                exportToShowroomButton.disabled = !enabled;
+                // Local export can be disabled during export operations, but not by default
+                if (includeLocal) {
+                    exportLocallyButton.disabled = !enabled;
+                }
+                exportRulesButton.disabled = !enabled;
+            }
+
+            showStatus(message, type = 'info') {
+                // Create a temporary status element if it doesn't exist
+                let statusElement = document.getElementById('status-message');
+                if (!statusElement) {
+                    statusElement = document.createElement('div');
+                    statusElement.id = 'status-message';
+                    statusElement.className = 'status';
+                    document.querySelector('.container').appendChild(statusElement);
+                }
+                statusElement.textContent = message;
+                statusElement.className = `status ${type}`;
+                statusElement.classList.remove('hidden');
+                
+                // Auto-hide after 3 seconds for success/info messages
+                if (type === 'success' || type === 'info') {
+                    setTimeout(() => {
+                        if (statusElement) {
+                            statusElement.classList.add('hidden');
+                        }
+                    }, 3000);
+                }
+            }
+
+            downloadFile(content, filename) {
+                try {
+                    const blob = new Blob([content], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    setTimeout(() => {
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                } catch (error) {
+                    console.error('Error downloading file:', error);
+                    this.showStatus(`Error downloading ${filename}`, 'error');
+                }
+            }
+
+            sendMessage(message) {
+                parent.postMessage({ pluginMessage: message }, '*');
+            }
+        }
+
+        // Initialize the UI
+        new FigmaToHTMLUI();
+    </script>
+</body>
+</html>
