@@ -18,7 +18,6 @@
             background: #ececec;
             overflow-y: auto;
             overflow-x: hidden;
-            min-height: 100%;
             margin: 0;
             padding: 0;
         }
@@ -537,7 +536,7 @@
                 
                 this.updateExportButton();
                 
-                // Initial resize
+                // Initial resize to fixed height
                 setTimeout(() => this.resizeUI(), 100);
             }
 
@@ -663,13 +662,12 @@
             }
 
             resizeUI() {
-                // Calculate the height of the content and resize the plugin UI
-                const body = document.body;
-                // Use scrollHeight to get the full content height
-                const height = Math.min(Math.max(body.scrollHeight, 300), 600); // Min 300px, max 600px
-                this.sendMessage({ 
-                    type: 'resize-ui', 
-                    height: height 
+                // Fixed height of 680px
+                const height = 680;
+
+                this.sendMessage({
+                    type: 'resize-ui',
+                    height: height
                 });
             }
 
