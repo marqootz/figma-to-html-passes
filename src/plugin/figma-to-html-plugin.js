@@ -5101,6 +5101,28 @@ if (document.readyState === 'loading') {
     }
 
     /**
+     * Resolve the "presentations" folder ID. If the configured folder ID already
+     * points to a folder named "presentations", use it; otherwise find or create
+     * a "presentations" subfolder. Prevents creating presentations/presentations/
+     * when the user's Folder ID is the presentations folder itself.
+     */
+    async resolvePresentationsFolderId(folderId, accessToken) {
+        const folderInfo = await this.getFolderInfo(folderId, accessToken);
+        if (folderInfo && folderInfo.name && folderInfo.name.trim().toLowerCase() === 'presentations') {
+            console.log('✅ Folder ID points directly to "presentations" folder, using it');
+            return folderId;
+        }
+        let presentationsFolderId = await this.findFolder(folderId, 'presentations', accessToken);
+        if (!presentationsFolderId) {
+            console.log('📝 "presentations" folder not found, creating it...');
+            presentationsFolderId = await this.findOrCreateFolder(folderId, 'presentations', accessToken);
+        } else {
+            console.log('✅ Found existing "presentations" folder:', presentationsFolderId.substring(0, 12) + '...');
+        }
+        return presentationsFolderId;
+    }
+
+    /**
      * Sanitize presentation name
      */
     sanitizePresentationName(input) {
@@ -5208,18 +5230,10 @@ if (document.readyState === 'loading') {
             // Auto-gen slide nav is always enabled for showroom exports
             const autoGenerateNavigation = true;
 
-            // Find existing presentations folder (don't create - just find)
-            // If it doesn't exist, we'll create it as part of the directory structure below
-            let presentationsFolderId = await this.findFolder(folderId, 'presentations', accessToken);
-            
+            // Resolve presentations folder: use folderId if it's already "presentations", else find/create subfolder
+            const presentationsFolderId = await this.resolvePresentationsFolderId(folderId, accessToken);
             if (!presentationsFolderId) {
-                console.log('📝 "presentations" folder not found, creating it...');
-                presentationsFolderId = await this.findOrCreateFolder(folderId, 'presentations', accessToken);
-                if (!presentationsFolderId) {
-                    throw new Error('Failed to create presentations folder');
-                }
-            } else {
-                console.log('✅ Found existing presentations folder:', presentationsFolderId.substring(0, 12) + '...');
+                throw new Error('Failed to resolve or create presentations folder');
             }
             
             const existingPresentations = await this.listFoldersInFolder(presentationsFolderId, accessToken);
@@ -5408,7 +5422,10 @@ if (document.readyState === 'loading') {
             const rulesJson = JSON.stringify(pass4Result.ruleSet, null, 2);
             
             // Navigate folder structure: presentations/{presentationName}/{wallName}/rules/
-            const presentationsFolderId = await this.findOrCreateFolder(folderId, 'presentations', accessToken);
+            const presentationsFolderId = await this.resolvePresentationsFolderId(folderId, accessToken);
+            if (!presentationsFolderId) {
+                throw new Error('Failed to resolve or create presentations folder');
+            }
             const presentationFolderId = await this.findOrCreateFolder(presentationsFolderId, presentationName, accessToken);
             const wallFolderId = await this.findOrCreateFolder(presentationFolderId, wallName, accessToken);
             const rulesFolderId = await this.findOrCreateFolder(wallFolderId, 'rules', accessToken);

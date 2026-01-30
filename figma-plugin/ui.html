@@ -837,12 +837,18 @@
             }
 
             async exportLocally() {
+                const presentationSelect = document.getElementById('presentation-select');
+                const newPresentationName = document.getElementById('new-presentation-name');
+                const hasPresentation = presentationSelect.value &&
+                    (presentationSelect.value !== 'new' || newPresentationName.value.trim().length > 0);
+                // When connected and presentation selected, route to Showroom (Google Drive) instead of local download
+                if (this.isConnected && hasPresentation) {
+                    this.exportToShowroom();
+                    return;
+                }
                 this.showStatus('Generating HTML from selection...', 'info');
-                // Disable local export button during export, but keep showroom buttons enabled
                 const exportLocallyButton = document.getElementById('export-locally');
                 exportLocallyButton.disabled = true;
-                
-                // Auto-gen slide nav is not needed for local exports (UXR Uxync)
                 this.sendMessage({
                     type: 'generate-html',
                     useSelection: true,
@@ -1592,6 +1598,8 @@ This is a placeholder file for the video: ${videoFile.filename}
                 exportToShowroomButton.disabled = !this.isConnected || !hasPresentation;
                 exportLocallyButton.disabled = false; // UXync export is always enabled
                 exportRulesButton.disabled = !this.isConnected || !hasPresentation; // Export navigation requires connection and presentation
+                // Label main Export button by destination: Showroom when connected + presentation, else local download
+                exportLocallyButton.textContent = (this.isConnected && hasPresentation) ? 'Export to Showroom' : 'Download to computer';
             }
 
             setExportButtonEnabled(enabled, includeLocal = false) {
