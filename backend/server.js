@@ -13,6 +13,8 @@
  * Update GOOGLE_AUTH_BACKEND_URL in plugin build to point to this server.
  */
 
+require('dotenv').config();
+
 const express = require('express');
 const { google } = require('googleapis');
 const crypto = require('crypto');
@@ -52,132 +54,142 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 /**
- * 1. POST /api/google-drive/oauth-token - Initiate OAuth Flow
- * 
+ * PKCE: generate code_verifier and S256 code_challenge (no client_secret needed).
+ */
+function generatePkce() {
+  const code_verifier = crypto.randomBytes(32).toString('base64url');
+  const digest = crypto.createHash('sha256').update(code_verifier).digest();
+  const code_challenge = digest.toString('base64url');
+  return { code_verifier, code_challenge };
+}
+
+/**
+ * 1. POST /api/google-drive/oauth-token - Initiate OAuth Flow (PKCE)
+ *
+ * PKCE-only: only GOOGLE_CLIENT_ID required (use Desktop app OAuth client). client_secret optional for Web application client.
+ *
  * Request body:
  * {
  *   "clientId": "your-client-id.apps.googleusercontent.com",
- *   "clientSecret": "your-client-secret" (optional if set in env),
+ *   "clientSecret": "optional-for-Web-application-client",
  *   "scope": "https://www.googleapis.com/auth/drive"
  * }
- * 
+ *
  * Response:
  * {
  *   "authUrl": "https://accounts.google.com/o/oauth2/auth?...",
  *   "sessionId": "unique-session-id"
  * }
  */
+function trimEnv(value) {
+  if (typeof value !== 'string') return value;
+  const t = value.trim();
+  if ((t.startsWith('"') && t.endsWith('"')) || (t.startsWith("'") && t.endsWith("'"))) {
+    return t.slice(1, -1).trim();
+  }
+  return t;
+}
+
 app.post('/api/google-drive/oauth-token', async (req, res) => {
   try {
     const { clientId, clientSecret, scope } = req.body;
-    
-    // Use clientId from request, or fall back to environment variable
-    const finalClientId = clientId || process.env.GOOGLE_CLIENT_ID;
-    const finalClientSecret = clientSecret || process.env.GOOGLE_CLIENT_SECRET;
-    
+
+    const finalClientId = trimEnv(clientId || process.env.GOOGLE_CLIENT_ID);
+    const finalClientSecret = trimEnv(clientSecret || process.env.GOOGLE_CLIENT_SECRET);
+
     if (!finalClientId) {
-      return res.status(400).json({ 
-        error: 'clientId required. Provide in request body or set GOOGLE_CLIENT_ID environment variable.' 
+      return res.status(400).json({
+        error: 'clientId required. Provide in request body or set GOOGLE_CLIENT_ID environment variable.'
       });
     }
-    
-    // Generate unique session ID
+    // PKCE-only: client_secret is optional. Use Desktop app OAuth client for PKCE-only (no secret).
+
     const sessionId = crypto.randomBytes(16).toString('hex');
-    
-    // Determine callback URL
-    const callbackUrl = process.env.CALLBACK_URL || 
+    const callbackUrl = process.env.CALLBACK_URL ||
       `${req.protocol}://${req.get('host')}/api/google-drive/oauth/callback`;
-    
-    console.log(`🔐 Initiating OAuth flow for session: ${sessionId}`);
+
+    const { code_verifier, code_challenge } = generatePkce();
+
+    console.log(`🔐 Initiating OAuth flow (PKCE) for session: ${sessionId}`);
     console.log(`   Client ID: ${finalClientId.substring(0, 30)}...`);
     console.log(`   Callback URL: ${callbackUrl}`);
-    
-    // Create OAuth2 client
+
     const oauth2Client = new google.auth.OAuth2(
       finalClientId,
-      finalClientSecret || null,
+      finalClientSecret || '',
       callbackUrl
     );
-    
-    // Generate authorization URL
+
     const authUrl = oauth2Client.generateAuthUrl({
       access_type: 'offline',
       scope: scope || 'https://www.googleapis.com/auth/drive',
       prompt: 'consent',
-      state: sessionId // Pass session ID in state parameter
+      state: sessionId,
+      code_challenge,
+      code_challenge_method: 'S256'
     });
-    
-    // Store session info
+
     tokenStore.set(sessionId, {
       status: 'pending',
       createdAt: Date.now(),
       clientId: finalClientId,
-      clientSecret: finalClientSecret
+      clientSecret: finalClientSecret || null,
+      code_verifier,
+      code_challenge
     });
-    
+
     console.log(`✅ Generated auth URL for session: ${sessionId}`);
-    
+
     res.json({
       authUrl,
       sessionId
     });
   } catch (error) {
     console.error('❌ Error initiating OAuth flow:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to initiate OAuth flow',
-      message: error.message 
+      message: error.message
     });
   }
 });
 
 /**
  * 2. GET /api/google-drive/oauth-token/:sessionId - Check Token Status (Polling)
- * 
- * Response (pending):
- * {
- *   "status": "pending",
- *   "message": "Waiting for user authorization..."
- * }
- * 
- * Response (ready):
- * {
- *   "status": "ready",
- *   "accessToken": "ya29.a0AfH6...",
- *   "refreshToken": "1//0g...",
- *   "expiresIn": 3600
- * }
- * 
- * Response (error):
- * {
- *   "status": "error",
- *   "message": "Authorization denied or failed"
- * }
+ *
+ * Response (pending): { "status": "pending", "message": "..." }
+ * Response (code_received): { "status": "code_received" } — plugin should POST code_verifier to exchange
+ * Response (ready): { "status": "ready", "accessToken", "refreshToken", "expiresIn" }
+ * Response (error): { "status": "error", "message": "..." }
  */
 app.get('/api/google-drive/oauth-token/:sessionId', (req, res) => {
   const { sessionId } = req.params;
   const entry = tokenStore.get(sessionId);
-  
+
   if (!entry) {
     return res.status(404).json({
       status: 'error',
       message: 'Session not found or expired'
     });
   }
-  
+
   if (entry.status === 'pending') {
     return res.json({
       status: 'pending',
       message: 'Waiting for user authorization...'
     });
   }
-  
+
+  if (entry.status === 'code_received') {
+    return res.json({
+      status: 'code_received',
+      message: 'Authorization code received. Send code_verifier to exchange endpoint.'
+    });
+  }
+
   if (entry.status === 'ready') {
-    // Return token and clean up
     const { accessToken, refreshToken, expiresIn } = entry;
     tokenStore.delete(sessionId);
-    
     console.log(`✅ Token ready for session: ${sessionId}`);
-    
     return res.json({
       status: 'ready',
       accessToken,
@@ -185,13 +197,11 @@ app.get('/api/google-drive/oauth-token/:sessionId', (req, res) => {
       expiresIn
     });
   }
-  
+
   if (entry.status === 'error') {
     const message = entry.message || 'Authorization failed';
     tokenStore.delete(sessionId);
-    
     console.log(`❌ Token error for session: ${sessionId} - ${message}`);
-    
     return res.json({
       status: 'error',
       message
@@ -287,40 +297,12 @@ app.get('/api/google-drive/oauth/callback', async (req, res) => {
     `);
     return;
   }
-  
+
   try {
-    console.log(`🔄 Exchanging authorization code for token for session: ${sessionId}`);
-    
-    // Get client credentials from stored entry
-    const { clientId, clientSecret } = entry;
-    
-    if (!clientId) {
-      throw new Error('Client ID not found in session');
-    }
-    
-    // Determine callback URL
-    const callbackUrl = process.env.CALLBACK_URL || 
-      `${req.protocol}://${req.get('host')}/api/google-drive/oauth/callback`;
-    
-    const oauth2Client = new google.auth.OAuth2(
-      clientId,
-      clientSecret || null,
-      callbackUrl
-    );
-    
-    // Exchange authorization code for tokens
-    const { tokens } = await oauth2Client.getToken(code);
-    
-    console.log(`✅ Successfully obtained tokens for session: ${sessionId}`);
-    
-    // Store tokens in session entry
-    entry.status = 'ready';
-    entry.accessToken = tokens.access_token;
-    entry.refreshToken = tokens.refresh_token;
-    entry.expiresIn = tokens.expiry_date ? 
-      Math.floor((tokens.expiry_date - Date.now()) / 1000) : 3600;
-    
-    // Show success page
+    console.log(`✅ Authorization code received for session: ${sessionId} (PKCE: plugin will exchange)`);
+    entry.code = code;
+    entry.status = 'code_received';
+
     res.send(`
       <!DOCTYPE html>
       <html>
@@ -347,27 +329,110 @@ app.get('/api/google-drive/oauth/callback', async (req, res) => {
           <div class="success">
             <h1>✅ Authorization Successful!</h1>
             <p>You have successfully authorized the Figma plugin to access Google Drive.</p>
-            <p>You can close this window and return to Figma. The plugin will automatically detect the authorization.</p>
+            <p>You can close this window and return to Figma. The plugin will automatically complete the connection.</p>
           </div>
         </body>
       </html>
     `);
   } catch (error) {
-    console.error(`❌ Error exchanging code for token for session ${sessionId}:`, error);
-    
+    console.error(`❌ Callback error for session ${sessionId}:`, error);
     entry.status = 'error';
-    entry.message = error.message || 'Failed to exchange authorization code';
-    
+    entry.message = error.message || 'Callback failed';
     res.status(500).send(`
       <!DOCTYPE html>
       <html>
         <body>
           <h1>Error</h1>
-          <p>Failed to exchange authorization code: ${error.message}</p>
+          <p>${error.message}</p>
           <p>Please try again.</p>
         </body>
       </html>
     `);
+  }
+});
+
+/**
+ * 3b. POST /api/google-drive/oauth-token/:sessionId/exchange - PKCE token exchange
+ *
+ * No body required. Backend uses stored code_verifier + code; client_secret included only if set (PKCE-only for Desktop app).
+ *
+ * Response: { "status": "ready", "accessToken", "refreshToken", "expiresIn" }
+ */
+app.post('/api/google-drive/oauth-token/:sessionId/exchange', async (req, res) => {
+  const { sessionId } = req.params;
+  const entry = tokenStore.get(sessionId);
+
+  if (!entry) {
+    return res.status(404).json({
+      status: 'error',
+      message: 'Session not found or expired'
+    });
+  }
+  if (entry.status !== 'code_received' || !entry.code || !entry.code_verifier) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Session not ready for exchange or code/code_verifier missing'
+    });
+  }
+
+  const callbackUrl = process.env.CALLBACK_URL ||
+    `${req.protocol}://${req.get('host')}/api/google-drive/oauth/callback`;
+
+  // PKCE-only: token exchange uses code_verifier; client_secret optional (required only for Web application client).
+  const tokenParams = {
+    code: entry.code,
+    client_id: entry.clientId,
+    code_verifier: entry.code_verifier,
+    redirect_uri: callbackUrl,
+    grant_type: 'authorization_code'
+  };
+  if (entry.clientSecret) {
+    tokenParams.client_secret = entry.clientSecret;
+  }
+
+  try {
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(tokenParams).toString()
+    });
+
+    const data = await tokenResponse.json();
+    if (!tokenResponse.ok) {
+      console.error(`❌ Token exchange failed for session ${sessionId}:`, data);
+      entry.status = 'error';
+      entry.message = data.error_description || data.error || 'Token exchange failed';
+      return res.json({
+        status: 'error',
+        message: entry.message
+      });
+    }
+
+    entry.status = 'ready';
+    entry.accessToken = data.access_token;
+    entry.refreshToken = data.refresh_token || null;
+    entry.expiresIn = data.expires_in || 3600;
+    delete entry.code;
+    delete entry.code_verifier;
+    delete entry.clientSecret;
+    tokenStore.set(sessionId, entry);
+
+    console.log(`✅ Token exchange successful for session: ${sessionId}`);
+
+    return res.json({
+      status: 'ready',
+      accessToken: entry.accessToken,
+      refreshToken: entry.refreshToken,
+      expiresIn: entry.expiresIn
+    });
+  } catch (error) {
+    console.error(`❌ Token exchange error for session ${sessionId}:`, error);
+    entry.status = 'error';
+    entry.message = error.message || 'Token exchange failed';
+    return res.status(500).json({
+      status: 'error',
+      message: entry.message
+    });
   }
 });
 
@@ -380,16 +445,21 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Backend server running on http://localhost:${PORT}`);
-  console.log(`📋 Endpoints:`);
-  console.log(`   POST /api/google-drive/oauth-token - Initiate OAuth flow`);
-  console.log(`   GET  /api/google-drive/oauth-token/:sessionId - Check token status`);
-  console.log(`   GET  /api/google-drive/oauth/callback - OAuth callback handler`);
-  console.log(`   GET  /health - Health check`);
-  console.log(`\n💡 Make sure to:`);
-  console.log(`   1. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables`);
-  console.log(`   2. Add http://localhost:${PORT}/api/google-drive/oauth/callback to Google OAuth redirect URIs`);
-  console.log(`   3. Update plugin build with GOOGLE_AUTH_BACKEND_URL=http://localhost:${PORT}\n`);
-});
+// Start server when run directly (node server.js); export for Electron when required
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Backend server running on http://localhost:${PORT}`);
+    console.log(`📋 Endpoints:`);
+    console.log(`   POST /api/google-drive/oauth-token - Initiate OAuth flow (PKCE)`);
+    console.log(`   GET  /api/google-drive/oauth-token/:sessionId - Poll token status`);
+    console.log(`   POST /api/google-drive/oauth-token/:sessionId/exchange - PKCE token exchange`);
+    console.log(`   GET  /api/google-drive/oauth/callback - OAuth callback handler`);
+    console.log(`   GET  /health - Health check`);
+    console.log(`\n💡 OAuth (PKCE): only GOOGLE_CLIENT_ID required (Desktop app client). client_secret optional.`);
+    console.log(`   1. Set GOOGLE_CLIENT_ID in .env (GOOGLE_CLIENT_SECRET optional)`);
+    console.log(`   2. Add http://localhost:${PORT}/api/google-drive/oauth/callback to Google OAuth redirect URIs`);
+    console.log(`   3. Update plugin build with GOOGLE_AUTH_BACKEND_URL=http://localhost:${PORT}\n`);
+  });
+} else {
+  module.exports = { app, PORT };
+}

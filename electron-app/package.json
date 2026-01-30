@@ -1,0 +1,62 @@
+{
+  "name": "figma-oauth-desktop",
+  "version": "1.0.0",
+  "description": "Self-contained desktop app for Figma plugin Google Drive OAuth backend",
+  "main": "main.js",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "generate-tray-icons": "node scripts/generate-tray-icons.js",
+    "prebuild": "node scripts/generate-tray-icons.js && node prebuild.js",
+    "build:mac": "npm run prebuild && electron-builder --mac",
+    "build:mac:x64": "npm run prebuild && electron-builder --mac --x64",
+    "build:mac:arm64": "npm run prebuild && electron-builder --mac --arm64",
+    "build:mac:both": "npm run prebuild && electron-builder --mac --x64 --arm64",
+    "build:mac:unsigned": "npm run prebuild && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac",
+    "build:mac:universal": "npm run prebuild && electron-builder --mac --universal",
+    "build:win": "npm run prebuild && electron-builder --win",
+    "build:all": "npm run prebuild && electron-builder --mac --win"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.figma-html.oauth-backend",
+    "productName": "Figma to HTML",
+    "icon": "icon.png",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "icon.png",
+      "assets"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend",
+        "to": "backend",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "assets",
+        "to": "assets",
+        "filter": ["**/*"]
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": ["dmg", "zip"],
+      "identity": null
+    },
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

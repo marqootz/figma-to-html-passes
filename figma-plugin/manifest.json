@@ -10,10 +10,14 @@
     "figma"
   ],
   "networkAccess": {
+    "reasoning": "The plugin needs to call a local OAuth backend during development to obtain Google Drive tokens. In production it will only call Google APIs.",
     "allowedDomains": [
       "https://www.googleapis.com",
       "https://accounts.google.com",
       "https://oauth2.googleapis.com"
+    ],
+    "devAllowedDomains": [
+      "http://localhost:3000"
     ]
   },
   "permissions": [

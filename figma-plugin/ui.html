@@ -340,18 +340,6 @@
                 <div class="section-header">Showroom</div>
                 <div class="section-subtitle">Presentation content for GDF Showroom</div>
 
-                <!-- Google Drive Status (hidden in main UI, shown in settings) -->
-                <div class="section" style="display: none;">
-                    <div class="input-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="font-size: 11px; color: #666;">Google Drive:</span>
-                        <span id="drive-status" style="font-size: 11px; color: #666;">Checking...</span>
-                    </div>
-                    <button id="connect-drive" class="button button-secondary" style="display: none; font-size: 11px; padding: 6px;">Connect to Google Drive</button>
-                    <button id="settings-drive" class="button button-secondary" style="display: none; font-size: 11px; padding: 6px; margin-top: 4px;">Settings</button>
-                </div>
-
-
-
                 <!-- Step 1: Configuration -->
                 <div class="step-container">
                     <div class="step-number">1</div>
@@ -541,14 +529,20 @@
             }
 
             setupEventListeners() {
-                // Google Drive connection
-                document.getElementById('connect-drive').addEventListener('click', () => {
-                    this.connectGoogleDrive();
-                });
+                // Google Drive connection (buttons may or may not be present)
+                const connectBtn = document.getElementById('connect-drive');
+                if (connectBtn) {
+                    connectBtn.addEventListener('click', () => {
+                        this.connectGoogleDrive();
+                    });
+                }
 
-                document.getElementById('settings-drive').addEventListener('click', () => {
-                    this.toggleOAuthSettings();
-                });
+                const settingsBtn = document.getElementById('settings-drive');
+                if (settingsBtn) {
+                    settingsBtn.addEventListener('click', () => {
+                        this.toggleOAuthSettings();
+                    });
+                }
 
                 // Footer settings button
                 const settingsFooterBtn = document.getElementById('settings-drive-footer');
@@ -594,6 +588,7 @@
                 // New presentation name input
                 document.getElementById('new-presentation-name').addEventListener('input', (e) => {
                     this.validatePresentationName(e.target.value);
+                    this.updateExportButton();
                 });
 
                 // Export buttons
@@ -1664,5 +1659,4 @@ This is a placeholder file for the video: ${videoFile.filename}
         new FigmaToHTMLUI();
     </script>
 </body>
-</html>
 </html>

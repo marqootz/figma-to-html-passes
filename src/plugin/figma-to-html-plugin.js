@@ -3691,15 +3691,14 @@ if (document.readyState === 'loading') {
                     if (!clientId) {
                         clientId = await figma.clientStorage.getAsync('googleDriveClientId');
                     }
-                    const clientSecret = await figma.clientStorage.getAsync('googleDriveClientSecret');
-                    
+                    // PKCE flow: no client_secret; backend generates code_verifier/code_challenge
                     console.log('🔍 Checking for Client ID...', {
                         hasClientId: !!clientId,
                         clientId: clientId ? clientId.substring(0, 20) + '...' : 'not configured'
                     });
 
                     if (clientId) {
-                        console.log('🌐 Calling backend OAuth endpoint:', `${backendUrl}/api/google-drive/oauth-token`);
+                        console.log('🌐 Calling backend OAuth endpoint (PKCE):', `${backendUrl}/api/google-drive/oauth-token`);
                         const response = await fetch(`${backendUrl}/api/google-drive/oauth-token`, {
                             method: 'POST',
                             headers: {
@@ -3707,7 +3706,6 @@ if (document.readyState === 'loading') {
                             },
                             body: JSON.stringify({
                                 clientId: clientId,
-                                clientSecret: clientSecret || null,
                                 scope: 'https://www.googleapis.com/auth/drive'
                             })
                         });
@@ -3736,9 +3734,9 @@ if (document.readyState === 'loading') {
                                 return;
                             }
                             
-                            // If backend returns authUrl, open it and poll for token
+                            // If backend returns authUrl, open it and poll for token (PKCE: no secret)
                             if (data.authUrl && data.sessionId) {
-                                console.log('🔐 Opening OAuth authorization URL from backend...');
+                                console.log('🔐 Opening OAuth authorization URL from backend (PKCE)...');
                                 await figma.openExternal(data.authUrl);
                                 
                                 this.sendMessage({
@@ -3746,7 +3744,7 @@ if (document.readyState === 'loading') {
                                     message: 'Please authorize in the browser window that just opened. The plugin will automatically detect when you\'re done.'
                                 });
                                 
-                                // Start polling for token
+                                // Start polling; when code_received, plugin calls exchange endpoint
                                 this.pollForBackendToken(backendUrl, data.sessionId);
                                 return;
                             }
@@ -3831,14 +3829,10 @@ if (document.readyState === 'loading') {
                 
                 if (status.status === 'ready') {
                     console.log('✅ Token received from backend!');
-                    
-                    // Store token
                     await figma.clientStorage.setAsync('googleDriveAccessToken', status.accessToken);
                     if (status.refreshToken) {
                         await figma.clientStorage.setAsync('googleDriveRefreshToken', status.refreshToken);
                     }
-                    
-                    // Update connection status
                     const folderId = await this.getGoogleDriveFolderId();
                     this.sendMessage({
                         type: 'drive-connection-status',
@@ -3849,17 +3843,59 @@ if (document.readyState === 'loading') {
                         type: 'success',
                         message: '✅ Connected to Google Drive!'
                     });
-                    
-                    return; // Stop polling
-                } else if (status.status === 'error') {
+                    return;
+                }
+                if (status.status === 'code_received') {
+                    // PKCE: backend has code; call exchange (no body; backend uses stored code_verifier)
+                    console.log('🔄 Code received, calling exchange endpoint...');
+                    try {
+                        const exRes = await fetch(`${backendUrl}/api/google-drive/oauth-token/${sessionId}/exchange`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({})
+                        });
+                        const exData = await exRes.json();
+                        if (exData.status === 'ready') {
+                            await figma.clientStorage.setAsync('googleDriveAccessToken', exData.accessToken);
+                            if (exData.refreshToken) {
+                                await figma.clientStorage.setAsync('googleDriveRefreshToken', exData.refreshToken);
+                            }
+                            const folderId = await this.getGoogleDriveFolderId();
+                            this.sendMessage({
+                                type: 'drive-connection-status',
+                                connected: true,
+                                folderId: folderId
+                            });
+                            this.sendMessage({
+                                type: 'success',
+                                message: '✅ Connected to Google Drive!'
+                            });
+                            return;
+                        }
+                        if (exData.status === 'error') {
+                            this.sendMessage({
+                                type: 'error',
+                                message: exData.message || 'Token exchange failed. Please try again.'
+                            });
+                            return;
+                        }
+                    } catch (exErr) {
+                        this.sendMessage({
+                            type: 'error',
+                            message: exErr.message || 'Exchange failed. Please try again.'
+                        });
+                        return;
+                    }
+                }
+                if (status.status === 'error') {
                     console.error('❌ Backend reported error:', status.message);
                     this.sendMessage({
                         type: 'error',
                         message: status.message || 'Authorization failed. Please try again.'
                     });
-                    return; // Stop polling
-                } else if (status.status === 'pending') {
-                    // Continue polling
+                    return;
+                }
+                if (status.status === 'pending') {
                     if (attempts < maxAttempts) {
                         setTimeout(poll, pollInterval);
                     } else {
@@ -3870,8 +3906,6 @@ if (document.readyState === 'loading') {
                         });
                     }
                 } else {
-                    console.warn('⚠️  Unknown status from backend:', status.status);
-                    // Continue polling for unknown statuses
                     if (attempts < maxAttempts) {
                         setTimeout(poll, pollInterval);
                     }

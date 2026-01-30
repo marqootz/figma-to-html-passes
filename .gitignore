@@ -2,6 +2,17 @@
 figma-plugin/code.js
 dist/
 
+# Binaries / Electron build output
+electron-app/dist/
+electron-app/node
+electron-app/npm
+electron-app/figma-oauth-desktop*
+electron-app/*.dmg
+electron-app/*.zip
+electron-app/*.exe
+electron-app/*.AppImage
+electron-app/*.app
+
 # Node.js
 node_modules/
 npm-debug.log*
