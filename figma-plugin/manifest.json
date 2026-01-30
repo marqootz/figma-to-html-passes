@@ -1,6 +1,6 @@
 {
   "name": "Figma to HTML",
-  "id": "figma-to-html-passes",
+  "id": "1599144975502286189",
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",
@@ -9,6 +9,7 @@
   "editorType": [
     "figma"
   ],
+  "documentAccess": "dynamic-page",
   "networkAccess": {
     "reasoning": "The plugin needs to call a local OAuth backend during development to obtain Google Drive tokens. In production it will only call Google APIs.",
     "allowedDomains": [
