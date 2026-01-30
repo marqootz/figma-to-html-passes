@@ -2,10 +2,35 @@
  * Simple Build Script for Figma to HTML Plugin
  * 
  * Builds the plugin with a clean, focused approach.
+ * Loads backend/.env before building so GOOGLE_CLIENT_ID, GOOGLE_DRIVE_FOLDER_ID,
+ * GOOGLE_AUTH_BACKEND_URL, etc. are available without manual export.
  */
 
 const fs = require('fs').promises;
+const fsSync = require('fs');
 const path = require('path');
+
+// Load backend/.env into process.env so plugin build picks up values (no manual export needed)
+const backendEnvPath = path.join(__dirname, 'backend', '.env');
+if (fsSync.existsSync(backendEnvPath)) {
+  const content = fsSync.readFileSync(backendEnvPath, 'utf8');
+  content.split('\n').forEach((line) => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#')) {
+      const eq = trimmed.indexOf('=');
+      if (eq > 0) {
+        const key = trimmed.slice(0, eq).trim();
+        let val = trimmed.slice(eq + 1).trim();
+        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+          val = val.slice(1, -1);
+        }
+        if (!process.env[key]) process.env[key] = val;
+      }
+    }
+  });
+  console.log('📋 Loaded env from backend/.env for plugin build');
+}
+
 const CodeGenerator = require('./src/build/code-generator');
 
 class SimpleBuilder {

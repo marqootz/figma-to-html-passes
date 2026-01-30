@@ -61,6 +61,64 @@ You will:
 
 ---
 
+## Build with values (pre-fill for distribution)
+
+Set these **environment variables** when building so the distributed app and plugin have values built in and users don’t need to edit `.env` or plugin Settings.
+
+### Desktop app (one-time setup)
+
+From project root, install backend deps, then build the app with your Client ID (and optional secret):
+
+```bash
+cd backend && npm install && cd ..
+cd electron-app
+npm install
+```
+
+**macOS:**
+```bash
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com npm run build:mac
+```
+
+**Windows:**
+```bash
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com npm run build:win
+```
+
+**Optional** (only if using a Web application OAuth client that needs a secret):
+```bash
+GOOGLE_CLIENT_ID=... GOOGLE_CLIENT_SECRET=... npm run build:mac
+```
+
+The prebuild script writes `GOOGLE_CLIENT_ID` (and optional `GOOGLE_CLIENT_SECRET`) into `backend/.env` before packaging, so the built app in `electron-app/dist/` has credentials pre-filled.
+
+---
+
+### Figma plugin (one-time setup)
+
+From **project root**, run `npm run build`. The build **automatically loads** `backend/.env` (if present), so you don't need to export variables manually. Put any of these in `backend/.env` to have them built into the plugin:
+
+| Env var | Purpose |
+|--------|--------|
+| `GOOGLE_AUTH_BACKEND_URL` | Backend URL for “Connect to Google Drive” (e.g. `http://localhost:3000`) |
+| `GOOGLE_CLIENT_ID` | OAuth Client ID (same as app) |
+| `GOOGLE_DRIVE_FOLDER_ID` | Default Google Drive folder ID (presentations folder) |
+| `GOOGLE_SERVICE_ACCOUNT_JSON` | *(Advanced)* JSON string of service account key; avoid for distribution |
+
+**Example –** ensure `backend/.env` has (at least):
+
+```
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_AUTH_BACKEND_URL=http://localhost:3000
+GOOGLE_DRIVE_FOLDER_ID=your-presentations-folder-id-from-drive-url
+```
+
+Then from project root: `npm run build`. You'll see `📋 Loaded env from backend/.env for plugin build`; the plugin will have those values built in. You can still override by exporting vars before `npm run build`.
+
+Output: `figma-plugin/code.js` and `dist/plugin/`. Distribute the **`figma-plugin/`** folder (or `dist/plugin/`) and have users import its `manifest.json` in Figma.
+
+---
+
 ## 4. Health check (optional)
 
 Users (or you) can confirm the backend is running by opening **http://localhost:3000/health** in a browser; it should show `{"status":"ok",...}`.
@@ -71,6 +129,6 @@ Users (or you) can confirm the backend is running by opening **http://localhost:
 
 - **Backend only:** `cd backend && node server.js`
 - **Desktop app (dev):** `cd electron-app && npm install && npm start` — backend runs in-process; set `GOOGLE_CLIENT_ID` in `backend/.env`.
-- **Plugin build:** `export GOOGLE_AUTH_BACKEND_URL='http://localhost:3000' && node build.js` — output in `figma-plugin/` and `dist/plugin/`.
+- **Plugin build:** `npm run build` (loads `backend/.env` automatically) — output in `figma-plugin/` and `dist/plugin/`.
 
 See also `electron-app/README.md` and `backend/README.md`.
