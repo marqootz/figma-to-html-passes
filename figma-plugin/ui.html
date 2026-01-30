@@ -454,13 +454,15 @@
                     </div>
 
                     <!-- Access Token (Manual Entry - Fallback) -->
-                    <div id="access-token-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9;">
-                        <div style="font-weight: 600; margin-bottom: 8px;">Access Token (Manual Entry - Fallback)</div>
-                        <div style="margin-bottom: 8px;">
-                            <input type="text" id="oauth-access-token" class="input" placeholder="Paste access token here (fallback if Connect button fails)" style="font-size: 12px; padding: 8px;">
-                            <div style="font-size: 11px; color: #666; margin-top: 4px;">Only needed if "Connect" button doesn't work. Use Connect button for automatic token acquisition.</div>
+                    <details id="access-token-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9;">
+                        <summary style="font-weight: 600; cursor: pointer; margin-bottom: 8px; color: #666;">Access Token (Manual Entry - Advanced)</summary>
+                        <div style="margin-top: 8px;">
+                            <div style="margin-bottom: 8px;">
+                                <input type="text" id="oauth-access-token" class="input" placeholder="Manual token entry (only if Connect button fails)" style="font-size: 12px; padding: 8px;">
+                                <div style="font-size: 11px; color: #666; margin-top: 4px;">Only needed if "Connect" button doesn't work. Use Connect button for automatic token acquisition.</div>
+                            </div>
                         </div>
-                    </div>
+                    </details>
 
                     <!-- OAuth Client ID -->
                     <div id="client-id-section" style="margin-bottom: 12px; padding-top: 12px; border-top: 1px solid #e1e5e9;">
@@ -1040,48 +1042,61 @@
                 const buildTimeConfig = message.buildTimeConfig || {};
                 console.log('🔧 Loading settings, build-time config:', buildTimeConfig);
                 
-                // Get all section elements (they should exist in DOM but be hidden by default)
+                // Get all section elements
                 const clientIdSection = document.getElementById('client-id-section');
                 const backendUrlSection = document.getElementById('backend-url-section');
                 const serviceAccountSection = document.getElementById('service-account-section');
                 const accessTokenSection = document.getElementById('access-token-section');
                 const folderIdNotice = document.getElementById('folder-id-build-time-notice');
                 
-                // All sections are now always visible in the modal
-                // Populate values if they exist
+                // Hide Client ID section if configured at build-time
                 if (clientIdSection) {
-                    const clientIdInput = document.getElementById('oauth-client-id');
-                    if (clientIdInput) {
-                        if (message.clientId) {
+                    if (buildTimeConfig.hasClientId) {
+                        clientIdSection.style.display = 'none';
+                    } else {
+                        clientIdSection.style.display = 'block';
+                        const clientIdInput = document.getElementById('oauth-client-id');
+                        if (clientIdInput && message.clientId) {
                             clientIdInput.value = message.clientId;
                         }
                     }
                 }
                 
+                // Hide Backend URL section if configured at build-time
                 if (backendUrlSection) {
-                    const backendUrlInput = document.getElementById('auth-backend-url');
-                    if (backendUrlInput && message.backendUrl) {
-                        backendUrlInput.value = message.backendUrl;
+                    if (buildTimeConfig.hasBackendUrl) {
+                        backendUrlSection.style.display = 'none';
+                    } else {
+                        backendUrlSection.style.display = 'block';
+                        const backendUrlInput = document.getElementById('auth-backend-url');
+                        if (backendUrlInput && message.backendUrl) {
+                            backendUrlInput.value = message.backendUrl;
+                        }
                     }
                 }
                 
+                // Hide Service Account section if configured at build-time
                 if (serviceAccountSection) {
-                    const saInput = document.getElementById('service-account-json');
-                    if (saInput && message.hasServiceAccountKey && !saInput.value) {
-                        saInput.placeholder = 'Service account key is set (hidden for security)';
+                    if (buildTimeConfig.hasServiceAccount) {
+                        serviceAccountSection.style.display = 'none';
+                    } else {
+                        serviceAccountSection.style.display = 'block';
+                        const saInput = document.getElementById('service-account-json');
+                        if (saInput && message.hasServiceAccountKey && !saInput.value) {
+                            saInput.placeholder = 'Service account key is set (hidden for security)';
+                        }
                     }
                 }
                 
-                // Access Token section - always visible
+                // Access Token section - always visible but collapsed (fallback only)
                 if (accessTokenSection) {
                     const tokenInput = document.getElementById('oauth-access-token');
                     if (tokenInput) {
                         if (message.hasAccessToken && !tokenInput.value) {
                             tokenInput.placeholder = 'Access token is set (hidden for security)';
                         } else {
-                            tokenInput.placeholder = 'Paste access token here (fallback if Connect button fails)';
+                            tokenInput.placeholder = 'Manual token entry (only if Connect button fails)';
                         }
-                        // Ensure input is enabled and focusable
                         tokenInput.disabled = false;
                         tokenInput.readOnly = false;
                     }

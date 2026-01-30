@@ -3788,15 +3788,37 @@ if (document.readyState === 'loading') {
                     // Fall through to manual method
                 }
             } else {
-                console.log('ℹ️  No backend URL configured - will use manual OAuth method (oauth2l)');
+                console.log('ℹ️  No backend URL configured - will try direct OAuth URL if Client ID is available');
             }
 
-            // Option 2: Direct user to get token using oauth2l (recommended) or manual entry
-            // Note: Figma plugins can't receive HTTP redirects, so we can't do a full OAuth flow
-            // Instead, users should get a token using oauth2l CLI and paste it in Settings
+            // Option 2: If Client ID is configured (even without backend), open OAuth URL directly
+            // Priority: Build-time config > clientStorage
+            let clientId = typeof GOOGLE_CLIENT_ID !== 'undefined' ? GOOGLE_CLIENT_ID : null;
+            if (!clientId) {
+                clientId = await figma.clientStorage.getAsync('googleDriveClientId');
+            }
+
+            if (clientId) {
+                console.log('🔐 Opening OAuth Playground (no backend, Client ID configured)...');
+                // Use OAuth Playground which has a known working redirect URI
+                // User will need to configure their own credentials in the playground
+                const scope = 'https://www.googleapis.com/auth/drive';
+                const playgroundUrl = `https://developers.google.com/oauthplayground/?code=4/0AdEuK8V&scope=${encodeURIComponent(scope)}`;
+                
+                // Open OAuth Playground with instructions
+                await figma.openExternal('https://developers.google.com/oauthplayground/');
+                
+                this.sendMessage({
+                    type: 'prompt-access-token',
+                    message: 'OAuth Playground opened in browser.\n\nTo get an access token:\n\n1. In OAuth Playground:\n   - Click the gear icon (⚙️) in top right\n   - Check "Use your own OAuth credentials"\n   - Enter your Client ID and Client Secret\n   - In "Step 1", select scope: https://www.googleapis.com/auth/drive\n   - Click "Authorize APIs"\n   - Sign in and authorize\n   - Click "Exchange authorization code for tokens"\n   - Copy the "Access token" value\n\n2. In Plugin Settings:\n   - Paste the token in "Access Token" field\n   - Click "Save Settings"\n   - Click "Connect to Google Drive" again\n\nNote: Your Client ID is already configured. You can find your Client Secret in Google Cloud Console → Credentials.'
+                });
+                return;
+            }
+
+            // Option 3: No Client ID configured - direct user to configure it first
             this.sendMessage({
                 type: 'prompt-access-token',
-                message: 'No access token found. Get one using oauth2l:\n\n1. Run: oauth2l fetch --credentials=oauth-credentials.json --scope=https://www.googleapis.com/auth/drive --output_format=bare\n2. Authorize in the browser when prompted\n3. Copy the token from the terminal output\n4. Paste it into Settings → Access Token field below\n5. Click "Save" then "Connect" again\n\nNote: Full drive scope is required for listing children of shared folders.\nSee docs/OAUTH_ALTERNATIVES.md for other methods.'
+                message: 'OAuth Client ID not configured.\n\nTo connect to Google Drive:\n\n1. Get OAuth Client ID:\n   - Go to Google Cloud Console\n   - Create OAuth 2.0 credentials (Web application)\n   - Add redirect URI: https://www.figma.com\n   - Copy the Client ID\n\n2. Configure in Settings:\n   - Open Settings → Paste Client ID\n   - Click "Save Settings"\n\n3. Then click "Connect" again to authorize\n\nAlternative: Get token manually using oauth2l CLI (see docs/OAUTH_ALTERNATIVES.md)'
             });
 
         } catch (error) {
@@ -4322,14 +4344,17 @@ if (document.readyState === 'loading') {
             }
             
             if (!accessToken || !folderId) {
-                console.warn('❌ Missing access token or folder ID');
-                console.warn('   - Access token:', accessToken ? 'exists' : 'MISSING');
-                console.warn('   - Folder ID:', folderId || 'MISSING');
+                // This is expected before connecting - not an error, just informational
                 if (!accessToken) {
-                    console.warn('   💡 To get an access token:');
-                    console.warn('      1. Use OAuth flow (click "Connect to Google Drive")');
-                    console.warn('      2. Or configure backend service for service account JWT signing');
-                    console.warn('      3. Or use oauth2l CLI (see docs/OAUTH_ALTERNATIVES.md)');
+                    console.log('ℹ️  Not connected to Google Drive yet');
+                    console.log('   - Access token: Not set (this is normal before connecting)');
+                    console.log('   💡 Click "Connect to Google Drive" to authenticate via OAuth');
+                } else {
+                    console.warn('⚠️  Google Drive folder ID not configured');
+                }
+                if (!folderId) {
+                    console.log('   - Folder ID:', folderId || 'Not configured');
+                    console.log('   💡 Configure folder ID in Settings if needed');
                 }
                 this.sendMessage({
                     type: 'presentations-loaded',
