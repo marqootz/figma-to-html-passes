@@ -65,6 +65,16 @@ class SimpleBuilder {
         // Copy UI
         await this.copyFile('figma-plugin/ui.html', 'plugin/ui.html');
         
+        // Copy icon if it exists
+        const iconPath = path.join(this.rootDir, 'figma-plugin', 'icon.png');
+        try {
+            await fs.access(iconPath);
+            await this.copyFile('figma-plugin/icon.png', 'plugin/icon.png');
+            console.log('✅ Icon copied');
+        } catch (error) {
+            console.log('ℹ️  No icon found (optional)');
+        }
+        
         // Process and generate code
         await this.processPluginCode();
         
@@ -111,6 +121,16 @@ class SimpleBuilder {
         await fs.copyFile(distCodePath, devCodePath);
         await fs.copyFile(distManifestPath, devManifestPath);
         await fs.copyFile(distUIPath, devUIPath);
+        
+        // Copy icon if it exists in dist
+        const distIconPath = path.join(this.pluginDir, 'icon.png');
+        const devIconPath = path.join(this.rootDir, 'figma-plugin', 'icon.png');
+        try {
+            await fs.access(distIconPath);
+            await fs.copyFile(distIconPath, devIconPath);
+        } catch (error) {
+            // Icon doesn't exist, that's okay
+        }
     }
 }
 

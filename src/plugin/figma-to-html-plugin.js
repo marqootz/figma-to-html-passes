@@ -321,10 +321,13 @@ class FigmaToHTMLPluginCode {
             console.log('✅ Pass 2 complete, CSS length:', pass2Result.css.length);
             
             console.log('🔍 Step 5: Wrapping in HTML document...');
-            console.log('🔍 EXPORT FLOW: About to generate filename from extractedNodes...');
-            // Generate filename based on selected node name
-            const filename = this.generateIntelligentFilename(extractedNodes);
+            console.log('🔍 EXPORT FLOW: About to generate filename...');
+            // Generate filename based on wallName from UI if provided, otherwise use node name
+            const filename = msg.wallName 
+                ? `${msg.wallName}.html`
+                : this.generateIntelligentFilename(extractedNodes);
             console.log('🔍 EXPORT FLOW: Generated filename:', filename);
+            console.log('🔍 EXPORT FLOW: wallName from UI:', msg.wallName);
             // Use filename as title - they will always match
             const title = filename;
             console.log('🔍 EXPORT FLOW: Using filename as title:', title);
@@ -976,6 +979,7 @@ class FigmaToHTMLPluginCode {
 
     /**
      * Generate an intelligent filename based on the extracted nodes
+     * Note: This is a fallback when wallName is not provided from UI
      * @param {Array} extractedNodes - Extracted node data
      * @returns {string} Generated filename
      */
@@ -997,11 +1001,21 @@ class FigmaToHTMLPluginCode {
         let nodeName = firstNode.name || 'figma-export';
         console.log('🔍 FILENAME GENERATION: Initial node name:', nodeName);
         
+        // Extract only the first part before common separators (e.g., "wall1 - extra info" -> "wall1")
+        // Common separators: " - ", " – ", " — ", " | ", " : ", etc.
+        const separatorPattern = /\s*[-–—|:]\s+/;
+        if (separatorPattern.test(nodeName)) {
+            nodeName = nodeName.split(separatorPattern)[0];
+            console.log('🔍 FILENAME GENERATION: Extracted first part before separator:', nodeName);
+        }
+        
         // Clean up the name for use as filename (remove special characters, replace spaces)
         const originalName = nodeName;
         nodeName = nodeName
             .replace(/[^\w\s-]/g, '') // Remove special characters
             .replace(/\s+/g, '-')      // Replace spaces with hyphens
+            .replace(/-+/g, '-')       // Replace multiple hyphens with single hyphen
+            .replace(/^-|-$/g, '')      // Remove leading/trailing hyphens
             .substring(0, 50);         // Limit length
         
         console.log('🔍 FILENAME GENERATION: Name after cleanup:', nodeName);
