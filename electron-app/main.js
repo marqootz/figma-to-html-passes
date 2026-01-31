@@ -120,11 +120,20 @@ function createTray(port) {
   // Try template PNG first (black + alpha, macOS tints for light/dark menu bar)
   let icon = null;
   if (iconPath) {
-    icon = nativeImage.createFromPath(iconPath);
-    log.push('loaded from ' + iconPath + ', isEmpty=' + icon.isEmpty());
-    if (icon.isEmpty()) {
+    try {
+      icon = nativeImage.createFromPath(iconPath);
+      log.push('loaded from ' + iconPath + ', isEmpty=' + icon.isEmpty());
+      log.push('icon size: ' + (icon.isEmpty() ? 'N/A' : icon.getSize().width + 'x' + icon.getSize().height));
+      if (icon.isEmpty()) {
+        log.push('WARNING: Icon is empty, falling back');
+        icon = null;
+      }
+    } catch (error) {
+      log.push('ERROR loading icon: ' + error.message);
       icon = null;
     }
+  } else {
+    log.push('WARNING: No icon path found');
   }
   // Fallback to colored circle if template fails
   if (!icon) {
